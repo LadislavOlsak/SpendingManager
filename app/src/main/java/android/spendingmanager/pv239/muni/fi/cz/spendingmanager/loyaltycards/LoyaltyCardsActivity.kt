@@ -1,13 +1,11 @@
-package android.spendingmanager.pv239.muni.fi.cz.spendingmanager
+package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.adapters.LoyaltyCardsAdapter
-import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.entities.LoyaltyCard
-import android.support.design.widget.Snackbar
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.ScanActivity
 import android.support.v7.app.AppCompatActivity
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_loyalty_cards.*
 
 class LoyaltyCardsActivity : AppCompatActivity() {
@@ -21,11 +19,13 @@ class LoyaltyCardsActivity : AppCompatActivity() {
         fab.setOnClickListener { startScanActivity() }
 
         val loyaltyCards = listOf(
-                LoyaltyCard("129612631FDD", "Tesco"),
-                LoyaltyCard("971R8B261", "Billa")
+                LoyaltyCard("501928794164", "MultiSport"),
+                LoyaltyCard("971R8B261", "Billa"),
+                LoyaltyCard("1234567890", "Tesco"),
+                LoyaltyCard("S421234567890", "ISIC")
         )
 
-        loyalty_cards_grid_view.adapter = LoyaltyCardsAdapter(this, loyaltyCards)
+        loyalty_cards_list.adapter = LoyaltyCardsAdapter(this, loyaltyCards)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -34,9 +34,10 @@ class LoyaltyCardsActivity : AppCompatActivity() {
         if (requestCode == SCAN_ACTIVITY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK && data != null) {
                 val cardNumber = data.getStringExtra(parameterName)
-                Toast.makeText(this, "Value :$cardNumber", Toast.LENGTH_LONG).show()
                 //todo check if card exists
                 startNewLoyaltyCardActivity(cardNumber)
+            } else if(resultCode == Activity.RESULT_CANCELED) {
+                startNewLoyaltyCardActivity(null)
             }
         }
     }

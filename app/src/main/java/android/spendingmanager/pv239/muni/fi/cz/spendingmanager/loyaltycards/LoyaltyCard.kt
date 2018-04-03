@@ -1,4 +1,4 @@
-package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.entities
+package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards
 
 /**
  * Created by Stefan on 26-Mar-18.

@@ -1,10 +1,11 @@
-package android.spendingmanager.pv239.muni.fi.cz.spendingmanager
+package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general
 
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.widget.Toast

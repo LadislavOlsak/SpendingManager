@@ -7,6 +7,7 @@
         android:required="true" />
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -16,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".home.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -26,12 +27,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoyaltyCardsActivity"
+            android:name=".loyaltycards.LoyaltyCardsActivity"
             android:label="@string/title_activity_loyalty_cards"/>
-        <activity android:name=".ScanActivity" />
+        <activity android:name=".general.ScanActivity" />
         <activity
             android:theme="@style/AppTheme.NoActionBar"
-            android:name=".NewLoyaltyCardActivity"
+            android:name=".loyaltycards.NewLoyaltyCardActivity"
             android:label="@string/title_activity_new_loyalty_card"/>
     </application>
 

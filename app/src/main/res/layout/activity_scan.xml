@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="android.spendingmanager.pv239.muni.fi.cz.spendingmanager.ScanActivity">
+    tools:context="android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.ScanActivity">
 
 </android.support.constraint.ConstraintLayout>
