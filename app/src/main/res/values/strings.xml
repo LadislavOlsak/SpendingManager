@@ -9,6 +9,6 @@
     <string name="loyalty_cards">Loyalty Cards</string>
     <string name="title_activity_loyalty_cards">Loyalty Cards</string>
     <string name="title_activity_new_loyalty_card">New Loyalty Card</string>
-    <string name="card_number">Card number</string>
+    <string name="card_number">Card Number</string>
     <string name="card_name">Card Name</string>
 </resources>

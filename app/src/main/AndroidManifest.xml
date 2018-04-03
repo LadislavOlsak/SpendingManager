@@ -30,6 +30,7 @@
             android:label="@string/title_activity_loyalty_cards"/>
         <activity android:name=".ScanActivity" />
         <activity
+            android:theme="@style/AppTheme.NoActionBar"
             android:name=".NewLoyaltyCardActivity"
             android:label="@string/title_activity_new_loyalty_card"/>
     </application>
