@@ -19,4 +19,7 @@
     <string name="barcode">Barcode</string>
     <string name="home">Home</string>
     <string name="accounts">Accounts</string>
+    <string name="income">Income</string>
+    <string name="expense">Expense</string>
+    <string name="transfer">Transfer</string>
 </resources>

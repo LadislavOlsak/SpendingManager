@@ -28,12 +28,14 @@
         </activity>
         <activity
             android:name=".loyaltycards.LoyaltyCardsActivity"
-            android:label="@string/title_activity_loyalty_cards"/>
+            android:label="@string/title_activity_loyalty_cards" />
         <activity android:name=".general.ScanActivity" />
         <activity
-            android:theme="@style/AppTheme.NoActionBar"
             android:name=".loyaltycards.NewLoyaltyCardActivity"
-            android:label="@string/title_activity_new_loyalty_card"/>
+            android:label="@string/title_activity_new_loyalty_card"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".account.AccountActivity" />
+        <activity android:name=".transaction.TransactionActivity"></activity>
     </application>
 
 </manifest>
