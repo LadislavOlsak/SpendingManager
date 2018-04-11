@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards.LoyaltyCardsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.CategoriesActivity
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.limits.LimitsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionActivity
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
@@ -67,6 +69,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_loyalty_cards -> {
                 startActivity(Intent(this, LoyaltyCardsActivity::class.java))
+            }
+            R.id.nav_categories -> {
+                startActivity(Intent(this, CategoriesActivity::class.java))
+            }
+            R.id.nav_limits -> {
+                startActivity(Intent(this, LimitsActivity::class.java))
             }
         }
 

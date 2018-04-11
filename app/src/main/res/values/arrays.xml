@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="default_categories">
+        <item>@string/food_drinks</item>
+        <item>@string/housing</item>
+        <item>@string/shopping</item>
+        <item>@string/entertainment</item>
+        <item>@string/others</item>
+    </string-array>
+    <string-array name="supported_currencies">
+        <item>CZK</item>
+        <item>EUR</item>
+        <item>USD</item>
+        <item>HUF</item>
+    </string-array>
+</resources>
