@@ -39,4 +39,7 @@
     <string name="custom_categories">Custom Categories</string>
 
     <string name="statistics">Statistics</string>
+
+    <string name="pick_color">Pick color</string>
+    <string name="card_preview">Card Preview</string>
 </resources>

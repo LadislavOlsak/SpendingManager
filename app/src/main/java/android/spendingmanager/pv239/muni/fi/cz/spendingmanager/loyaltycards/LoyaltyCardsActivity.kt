@@ -2,6 +2,7 @@ package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.ScanActivity
@@ -19,10 +20,10 @@ class LoyaltyCardsActivity : AppCompatActivity() {
         fab.setOnClickListener { startScanActivity() }
 
         val loyaltyCards = listOf(
-                LoyaltyCard("501928794164", "MultiSport"),
-                LoyaltyCard("971R8B261", "Billa"),
-                LoyaltyCard("1234567890", "Tesco"),
-                LoyaltyCard("S421234567890", "ISIC")
+            LoyaltyCard("501928794164", "MultiSport", Color.BLUE),
+            LoyaltyCard("971R8B261", "Billa", Color.MAGENTA),
+            LoyaltyCard("1234567890", "Tesco", Color.YELLOW),
+            LoyaltyCard("S421234567890", "ISIC", Color.GREEN)
         )
 
         loyalty_cards_list.adapter = LoyaltyCardsAdapter(this, loyaltyCards)
