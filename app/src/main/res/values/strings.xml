@@ -37,4 +37,6 @@
     <string name="save_changes">Save changes</string>
     <string name="default_categories">Default Categories</string>
     <string name="custom_categories">Custom Categories</string>
+
+    <string name="statistics">Statistics</string>
 </resources>

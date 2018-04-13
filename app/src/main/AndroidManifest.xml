@@ -39,6 +39,9 @@
         <activity
             android:name=".limits.LimitsActivity"
             android:label="@string/category_limits" />
+        <activity
+            android:name=".statistics.StatisticsActivity"
+            android:label="@string/statistics" />
         <activity android:name=".categories.CategoriesActivity"
             android:label="@string/categories"/>
     </application>
