@@ -8,11 +8,9 @@ import android.support.v4.app.FragmentStatePagerAdapter
 class StatisticsDatePagerAdapter(fragmentManager: FragmentManager) : FragmentStatePagerAdapter(fragmentManager) {
 
     var mNumOfTabs: Int = 0
-    lateinit var transactions: List<Transaction>
 
-    constructor(fm: FragmentManager, NumOfTabs: Int, Transactions: List<Transaction>) : this(fm) {
+    constructor(fm: FragmentManager, NumOfTabs: Int) : this(fm) {
         this.mNumOfTabs = NumOfTabs
-        this.transactions = Transactions
     }
 
     override fun getItem(position: Int): Fragment? {
