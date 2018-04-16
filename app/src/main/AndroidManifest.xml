@@ -1,49 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="android.spendingmanager.pv239.muni.fi.cz.spendingmanager">
+          package="android.spendingmanager.pv239.muni.fi.cz.spendingmanager">
 
     <uses-feature
-        android:name="android.hardware.camera"
-        android:required="true" />
+            android:name="android.hardware.camera"
+            android:required="true"/>
 
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme">
         <activity
-            android:name=".home.MainActivity"
-            android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar">
+                android:name=".home.MainActivity"
+                android:label="@string/title_activity_main"
+                android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
-            android:name=".loyaltycards.LoyaltyCardsActivity"
-            android:label="@string/title_activity_loyalty_cards" />
-        <activity android:name=".general.ScanActivity" />
+                android:name=".loyaltycards.LoyaltyCardsActivity"
+                android:label="@string/title_activity_loyalty_cards"/>
+        <activity android:name=".general.ScanActivity"/>
         <activity
-            android:name=".loyaltycards.NewLoyaltyCardActivity"
-            android:label="@string/title_activity_new_loyalty_card"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".account.AccountActivity" />
-        <activity android:name=".transaction.TransactionActivity" />
+                android:name=".loyaltycards.NewLoyaltyCardActivity"
+                android:label="@string/title_activity_new_loyalty_card"
+                android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".account.AccountActivity"/>
         <activity
             android:name=".limits.LimitsActivity"
             android:label="@string/category_limits" />
         <activity
             android:name=".statistics.StatisticsActivity"
             android:label="@string/statistics" />
-        <activity android:name=".categories.CategoriesActivity"
-            android:label="@string/categories"/>
+        <activity
+                android:name=".categories.CategoriesActivity"
+                android:label="@string/categories"/>
+        <activity
+                android:name=".transaction.TransactionActivity"
+                android:label="@string/title_activity_transaction1"
+                android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
