@@ -13,6 +13,7 @@ import android.inputmethodservice.Keyboard
 import android.util.TypedValue
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.home.MainActivity
 import android.widget.*
+import java.util.*
 
 
 class StatisticsDateGeneral : Fragment() {
@@ -36,7 +37,11 @@ class StatisticsDateGeneral : Fragment() {
             // místo toho přepočítat hodnoty categorie - hodnoty za časové období
         }
 
+        val categoriesList =  StatisticsHelper().GetCategories()
+        val categoriesListIterator = categoriesList.iterator()
+
         var tableDatesOverview = view.findViewById<View>(R.id.tableDatesOverview) as TableLayout
+        tableDatesOverview.isClickable = false
         val row = TableRow(getActivity())
         val txt1 = EditText(getActivity())
         txt1.setText("Category")
@@ -47,10 +52,12 @@ class StatisticsDateGeneral : Fragment() {
         row.addView(txt1)
         row.addView(txt2)
         row.addView(txt3)
+        row.setBackgroundColor(Color.rgb(220,220,220))
         tableDatesOverview.addView(row)
 
         var i: Int = 1
-        while (i <= 4) {
+        while (categoriesListIterator.hasNext()) {
+            val category = categoriesListIterator.next()
             val row = TableRow(getActivity())
             if (i % 2 === 0) {
                 row.setBackgroundColor(Color.rgb(220,220,220))
@@ -58,13 +65,20 @@ class StatisticsDateGeneral : Fragment() {
                 row.setBackgroundColor(Color.rgb(180,180,180))
             }
 
-            var j: Int = 1
-            while (j <= 3) {
-                val txt = EditText(getActivity())
-                txt.setText("{$i,$j} ")
-                row.addView(txt)
-                j++
-            }
+            val txt1 = EditText(getActivity())
+            txt1.setText(category.categoryName)
+            row.addView(txt1)
+
+            val value = StatisticsHelper().CalculateValueTransactions(category, weeksSpiner.getSelectedItem().toString().toInt(), GregorianCalendar.getInstance())
+            val txt2 = EditText(getActivity())
+            txt2.setText(value.toString())
+            row.addView(txt2)
+
+            // TODO: Vypočítat minulé období
+            val txt3 = EditText(getActivity())
+            txt3.setText("0")
+            row.addView(txt3)
+
             tableDatesOverview.addView(row)
             i++
         }
