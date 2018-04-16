@@ -1,59 +1,118 @@
 package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction
 
+import android.support.design.widget.TabLayout
 import android.support.v7.app.AppCompatActivity
+
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentPagerAdapter
 import android.os.Bundle
-import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
-import android.view.MotionEvent
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.Toast
-import me.rishabhkhanna.customtogglebutton.CustomToggleButton
+import android.view.ViewGroup
+
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
+import android.widget.Button
+import android.widget.ListView
+import kotlinx.android.synthetic.main.activity_transaction.*
+import java.math.BigDecimal
+import java.util.*
+import kotlin.collections.ArrayList
 
 class TransactionActivity : AppCompatActivity() {
 
-    private var incomeBtn : CustomToggleButton? = null
-    private var expenseBtn : CustomToggleButton? = null
-    private var transferBtn : CustomToggleButton? = null
+    /**
+     * The [android.support.v4.view.PagerAdapter] that will provide
+     * fragments for each of the sections. We use a
+     * {@link FragmentPagerAdapter} derivative, which will keep every
+     * loaded fragment in memory. If this becomes too memory intensive, it
+     * may be best to switch to a
+     * [android.support.v4.app.FragmentStatePagerAdapter].
+     */
+    private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_transaction)
 
-        //initElements()
+        setSupportActionBar(toolbar)
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+        mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
+
+        // Set up the ViewPager with the sections adapter.
+        container.adapter = mSectionsPagerAdapter
+
+        container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
+        tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
     }
 
-    private fun initElements() {
-        incomeBtn = findViewById(R.id.transaction_income_btn)
-        expenseBtn = findViewById(R.id.transaction_expense_btn)
-        transferBtn = findViewById(R.id.transaction_transfer_btn)
+    /**
+     * A [FragmentPagerAdapter] that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
+     */
+    inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
-        incomeBtn?.setOnTouchListener { view, motionEvent -> handleActionButtons(view as CustomToggleButton, motionEvent) }
-        expenseBtn?.setOnTouchListener { view, motionEvent -> handleActionButtons(view as CustomToggleButton, motionEvent) }
-        transferBtn?.setOnTouchListener { view, motionEvent -> handleActionButtons(view as CustomToggleButton, motionEvent) }
+        override fun getItem(position: Int): Fragment {
+            return PlaceholderFragment.newInstance(position + 1)
+        }
+
+        override fun getCount(): Int {
+            return 3
+        }
     }
 
-    private fun handleActionButtons (view : CustomToggleButton, motionEvent : MotionEvent) : Boolean {
-        Toast.makeText(this, "Touched", Toast.LENGTH_LONG).show()
+    /**
+     * A placeholder fragment containing a simple view.
+     */
+    class PlaceholderFragment : Fragment() {
 
-        if(motionEvent.action != MotionEvent.ACTION_DOWN) {
-            return false
+        private var transactionItems : List<TransactionItem> = mutableListOf()
+        private var adapter : TransactionItemsAdapter? = null
+
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                                  savedInstanceState: Bundle?): View? {
+            val rootView = inflater.inflate(R.layout.fragment_transaction, container, false)
+
+            val list = rootView.findViewById(R.id.transaction_items_lv) as ListView
+            adapter = TransactionItemsAdapter(this, getData())
+            list.adapter = adapter
+
+            val addTransactionItemBtn = rootView.findViewById(R.id.transaction_add_new_field_btn) as Button
+            addTransactionItemBtn.setOnClickListener { addNewTransactionItem() }
+
+            //rootView.section_label.text = getString(R.string.section_format, arguments.getInt(ARG_SECTION_NUMBER))
+            return rootView
         }
 
-        if(!view.isChecked) {
-            view.isChecked = !view.isChecked
+        private fun getData() : List<TransactionItem> {
+            transactionItems += TransactionItem("NANANA", BigDecimal("54848.84"), Currency.getInstance("CZK"))
+            return transactionItems
         }
 
-        when(view.id) {
-            R.id.transaction_income_btn -> setCheckedState(view.isChecked, true, true)
-            R.id.transaction_expense_btn -> setCheckedState(true, view.isChecked, true)
-            R.id.transaction_transfer_btn -> setCheckedState(true, true, view.isChecked)
+        private fun addNewTransactionItem() {
+            transactionItems += TransactionItem("Test", BigDecimal("0"), Currency.getInstance("CZK"))
+            adapter?.updateData(transactionItems)
         }
 
-        return false
-    }
+        companion object {
+            /**
+             * The fragment argument representing the section number for this
+             * fragment.
+             */
+            private val ARG_SECTION_NUMBER = "section_number"
 
-    private fun setCheckedState(incomeChecked: Boolean, expenseChecked: Boolean, transferChecked: Boolean) {
-        incomeBtn?.isChecked = incomeChecked
-        expenseBtn?.isChecked = expenseChecked
-        transferBtn?.isChecked = transferChecked
+            /**
+             * Returns a new instance of this fragment for the given section
+             * number.
+             */
+            fun newInstance(sectionNumber: Int): PlaceholderFragment {
+                val fragment = PlaceholderFragment()
+                val args = Bundle()
+                args.putInt(ARG_SECTION_NUMBER, sectionNumber)
+                fragment.arguments = args
+                return fragment
+            }
+        }
     }
 }
