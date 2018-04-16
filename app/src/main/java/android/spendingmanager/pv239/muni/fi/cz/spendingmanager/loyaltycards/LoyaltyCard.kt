@@ -5,6 +5,7 @@ package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards
  */
 class LoyaltyCard(
         var cardNumber : String,
-        var cardName : String
+        var cardName : String,
+        var color : Int
 ) {
 }

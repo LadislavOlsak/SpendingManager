@@ -133,6 +133,51 @@
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/customborder"
+            android:layout_marginBottom="10dp"
+            android:elevation="2dp">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/card_preview"
+                    android:textSize="20sp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1"/>
+                <ImageView
+                    android:id="@+id/new_loyalty_card_picked_color_iv"
+                    android:layout_margin="5dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_colorize_black_24dp"/>
+            </LinearLayout>
+            <View
+                android:id="@+id/divider4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/colorAccent" />
+
+            <include
+                android:id="@+id/new_loyalty_card_preview_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                layout="@layout/loyalty_card_item" />
+
+        </LinearLayout>
+
         <Button
             android:id="@+id/new_loyalty_card_submit_btn"
             android:layout_width="match_parent"

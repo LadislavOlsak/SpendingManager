@@ -2,6 +2,8 @@ package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +14,8 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
 import com.journeyapps.barcodescanner.BarcodeEncoder
+import android.graphics.drawable.Drawable
+import android.support.v4.content.ContextCompat
 
 
 /**
@@ -35,6 +39,11 @@ class LoyaltyCardsAdapter(
 
         val cardEanIv = view.findViewById(R.id.loyalty_card_item_barcode_iv) as ImageView
         cardEanIv.setImageBitmap(getBarcodeBitmap(loyaltyCard.cardNumber))
+
+        val cardTileLayout = view.findViewById(R.id.loyalty_card_item_tile_layout) as LinearLayout
+
+        cardTileLayout.background = getColoredBackground(loyaltyCard.color)
+
         //cardEanIv.setOnClickListener { fullScreenDisplay() }
 
         return view
@@ -54,5 +63,15 @@ class LoyaltyCardsAdapter(
             e.printStackTrace()
         }
         return null
+    }
+
+    private fun getColoredBackground(color : Int) : Drawable {
+        val border = getBorderDrawable()
+        border.setColorFilter(color, PorterDuff.Mode.MULTIPLY)
+        return border
+    }
+
+    private fun getBorderDrawable(): Drawable {
+        return ContextCompat.getDrawable(context, R.drawable.customborder)
     }
 }

@@ -39,4 +39,14 @@
     <string name="custom_categories">Custom Categories</string>
 
     <string name="statistics">Statistics</string>
+
+    <string name="pick_color">Pick color</string>
+    <string name="card_preview">Card Preview</string>
+    <string name="title_activity_transaction1">Transaction1Activity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_3">Tab 3</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="price">Price</string>
+    <string name="add_new_field">Add new field</string>
 </resources>

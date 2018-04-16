@@ -7,7 +7,13 @@ import kotlinx.android.synthetic.main.activity_new_loyalty_card.*
 import android.provider.MediaStore
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.ColorPickingActivity
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.ColorPickerFragment
+import android.support.v4.content.ContextCompat
+import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.Toast
 import com.snatik.storage.Storage
@@ -17,11 +23,20 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class NewLoyaltyCardActivity(
+class NewLoyaltyCardActivity (
         private var cardNumber : String? = null,
         private val REQUEST_IMAGE_CAPTURE : Int = 1,
         private var isFrontPicture : Boolean? = null
-) : AppCompatActivity() {
+) : ColorPickingActivity()  {
+
+    private var cardColor : Int? = null
+
+    override fun colorPicked(color: Int?) {
+        if(color != null) {
+            cardColor = color
+            new_loyalty_card_picked_color_iv.background = getColoredBackground(color)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,9 +47,22 @@ class NewLoyaltyCardActivity(
 
     }
 
+    private fun getColoredBackground(color : Int) : Drawable {
+        val border = getBorderDrawable()
+        border.setColorFilter(color, PorterDuff.Mode.MULTIPLY)
+        return border
+    }
+
+    private fun getBorderDrawable(): Drawable {
+        return ContextCompat.getDrawable(this, R.drawable.customborder)
+    }
+
     private fun setHandlers() {
         new_loyalty_card_snap_front.setOnClickListener { takePicture(true) }
         new_loyalty_card_snap_back.setOnClickListener { takePicture(false) }
+        new_loyalty_card_picked_color_iv.setOnClickListener {
+            ColorPickerFragment().showDialog(this, supportFragmentManager)
+        }
     }
 
     private fun takePicture(isFront : Boolean) {
@@ -94,7 +122,13 @@ class NewLoyaltyCardActivity(
         cardNumber = intent.getStringExtra("cardNumber")
         if(cardNumber != null && cardNumber?.isNotEmpty() == true) {
             new_loyalty_card_number.setText(cardNumber)
+
         }
     }
+
+    //TODO:
+//    private fun inflatePreview() {
+//        LayoutInflater.from(this).inflate(R.layout.loyalty_card_item, window.decorView, false)
+//    }
 
 }
