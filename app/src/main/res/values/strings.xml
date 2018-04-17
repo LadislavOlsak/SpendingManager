@@ -49,4 +49,7 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="price">Price</string>
     <string name="add_new_field">Add new field</string>
+    <string name="note">Note</string>
+    <string name="category">Category</string>
+    <string name="delete_current_line">Delete current line</string>
 </resources>
