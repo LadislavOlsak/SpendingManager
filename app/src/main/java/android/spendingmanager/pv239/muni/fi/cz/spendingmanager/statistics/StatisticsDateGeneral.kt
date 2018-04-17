@@ -30,25 +30,30 @@ class StatisticsDateGeneral : Fragment() {
         val spinnerPosition = weeksSpinerAdapter.getPosition("4")
         weeksSpiner.setSelection(spinnerPosition)
 
-        //val txtTest = view.findViewById<View>(R.id.buttonTest) as TextView
         var btnWeekSpinner = view.findViewById<View>(R.id.btnWeeksSpinner) as Button
         btnWeekSpinner.setOnClickListener {
-            //txtTest.setText(weeksSpiner.getSelectedItem().toString())
-            // místo toho přepočítat hodnoty categorie - hodnoty za časové období
+            GenerateData(view, weeksSpiner)
         }
 
+        GenerateData(view, weeksSpiner)
+
+        return view
+    }
+
+    private fun GenerateData(view: View, weeksSpiner: Spinner)
+    {
         val categoriesList =  StatisticsHelper().GetCategories()
         val categoriesListIterator = categoriesList.iterator()
 
         var tableDatesOverview = view.findViewById<View>(R.id.tableDatesOverview) as TableLayout
-        tableDatesOverview.isClickable = false
+        tableDatesOverview.removeAllViews()
         val row = TableRow(getActivity())
         val txt1 = EditText(getActivity())
         txt1.setText("Category")
         val txt2 = EditText(getActivity())
         txt2.setText("Value")
         val txt3 = EditText(getActivity())
-        txt3.setText("+/-")
+        txt3.setText("+/- *")
         row.addView(txt1)
         row.addView(txt2)
         row.addView(txt3)
@@ -69,21 +74,43 @@ class StatisticsDateGeneral : Fragment() {
             txt1.setText(category.categoryName)
             row.addView(txt1)
 
-            val value = StatisticsHelper().CalculateValueTransactions(category, weeksSpiner.getSelectedItem().toString().toInt(), GregorianCalendar.getInstance())
+            val currentDate = GregorianCalendar.getInstance();
+            val value = StatisticsHelper().CalculateValueTransactions(category, weeksSpiner.getSelectedItem().toString().toInt(), currentDate)
             val txt2 = EditText(getActivity())
             txt2.setText(value.toString())
             row.addView(txt2)
 
             // TODO: Vypočítat minulé období
+            val lastSeasonDate = StatisticsHelper().CalculateStartDate(weeksSpiner.getSelectedItem().toString().toInt(), currentDate, 1)
+            val lastSeasonValue = StatisticsHelper().CalculateValueTransactions(category, weeksSpiner.getSelectedItem().toString().toInt(), lastSeasonDate)
+            var ratio = 0.0
+            if (lastSeasonValue != 0)
+            {
+                ratio = ((value/lastSeasonValue.toDouble()) * 100)
+            }
+            else if (value != 0)
+            {
+                ratio = 999.0
+            }
+
             val txt3 = EditText(getActivity())
-            txt3.setText("0")
+            txt3.setText(ratio.toInt().toString() + " %")
+            if (ratio > 100)
+            {
+                txt3.setTextColor(Color.rgb(121,0,36))
+            }
+            else
+            {
+                txt3.setTextColor(Color.rgb(0,115,46))
+            }
             row.addView(txt3)
 
             tableDatesOverview.addView(row)
             i++
         }
 
-        return view
+        var tableDatesNote = view.findViewById<View>(R.id.tableDatesNote) as TextView
+        tableDatesNote.setText("* Comparison to previous " + weeksSpiner.getSelectedItem().toString() + " weeks")
     }
-
 }
+
