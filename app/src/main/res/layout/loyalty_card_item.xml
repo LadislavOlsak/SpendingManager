@@ -7,14 +7,37 @@
     android:orientation="vertical"
     android:background="@drawable/customborder">
 
-    <TextView
-        android:id="@+id/loyalty_card_item_name_tv"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:gravity="center"
-        android:text="@string/card_name"
-        android:layout_margin="10dp"/>
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/loyalty_cards_item_name_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="@string/card_name"
+            android:layout_margin="10dp"/>
+        <ImageView
+            android:id="@+id/loyalty_cards_item_edit_iv"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="10dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_mode_edit_black_24dp"
+            android:contentDescription="@string/edit"/>
+        <ImageView
+            android:id="@+id/loyalty_cards_item_delete_iv"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="10dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_delete_black_24dp"
+            android:contentDescription="@string/delete"/>
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/loyalty_card_item_barcode_iv"
