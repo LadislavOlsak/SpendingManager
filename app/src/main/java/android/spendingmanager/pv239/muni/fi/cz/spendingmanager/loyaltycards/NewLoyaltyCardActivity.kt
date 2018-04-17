@@ -12,11 +12,18 @@ import android.graphics.drawable.Drawable
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.ColorPickingActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.ColorPickerFragment
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.ViewMode
 import android.support.v4.content.ContextCompat
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import com.google.gson.Gson
 import com.snatik.storage.Storage
+import kotlinx.android.synthetic.main.loyalty_card_item.*
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -31,26 +38,29 @@ class NewLoyaltyCardActivity (
 
     private var cardColor : Int? = null
 
-    override fun colorPicked(color: Int?) {
-        if(color != null) {
-            cardColor = color
-            new_loyalty_card_picked_color_iv.background = getColoredBackground(color)
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_loyalty_card)
 
         setHandlers()
+
+        initView()
         setCardNumber()
 
+        //todo handle mode : New / Edit
     }
 
     private fun getColoredBackground(color : Int) : Drawable {
         val border = getBorderDrawable()
         border.setColorFilter(color, PorterDuff.Mode.MULTIPLY)
         return border
+    }
+
+    override fun colorPicked(color: Int?) {
+        if(color != null) {
+            cardColor = color
+            new_loyalty_card_preview_layout.background = getColoredBackground(color)
+        }
     }
 
     private fun getBorderDrawable(): Drawable {
@@ -63,6 +73,20 @@ class NewLoyaltyCardActivity (
         new_loyalty_card_picked_color_iv.setOnClickListener {
             ColorPickerFragment().showDialog(this, supportFragmentManager)
         }
+        new_loyalty_card_name.addTextChangedListener( object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) { }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                setPreviewCardName(p0.toString())
+            }
+        })
+        new_loyalty_card_number.addTextChangedListener( object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+                setPreviewCardBarcode(p0.toString())
+            }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
+        })
     }
 
     private fun takePicture(isFront : Boolean) {
@@ -118,17 +142,42 @@ class NewLoyaltyCardActivity (
         }
     }
 
+    private fun initView() {
+        loyalty_cards_item_edit_iv.visibility = View.GONE
+        loyalty_cards_item_delete_iv.visibility = View.GONE
+
+        val viewMode = ViewMode.valueOf(intent.getStringExtra("mode"))
+
+        when(viewMode) {
+            ViewMode.New -> setCardNumber()
+            ViewMode.Edit -> setCardDetails()
+            else -> { }
+        }
+    }
+
     private fun setCardNumber() {
         cardNumber = intent.getStringExtra("cardNumber")
         if(cardNumber != null && cardNumber?.isNotEmpty() == true) {
             new_loyalty_card_number.setText(cardNumber)
-
         }
     }
 
-    //TODO:
-//    private fun inflatePreview() {
-//        LayoutInflater.from(this).inflate(R.layout.loyalty_card_item, window.decorView, false)
-//    }
+    private fun setCardDetails() {
+        val loyaltyCard = Gson().fromJson(intent.getStringExtra("card"), LoyaltyCard::class.java)
+        new_loyalty_card_name.setText(loyaltyCard.cardName)
+        new_loyalty_card_number.setText(loyaltyCard.cardNumber)
+        setPreviewCardName(loyaltyCard.cardName)
+        setPreviewCardBarcode(loyaltyCard.cardNumber)
 
+        colorPicked(loyaltyCard.color)
+        //TODO set File paths / Images
+    }
+
+    private fun setPreviewCardName(cardName : String) {
+        loyalty_cards_item_name_tv.text = cardName
+    }
+
+    private fun setPreviewCardBarcode(cardNumber : String) {
+        loyalty_card_item_barcode_iv.setImageBitmap(BarcodeImageGenerator.getBarcodeBitmap(cardNumber))
+    }
 }

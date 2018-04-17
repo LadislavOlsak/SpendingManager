@@ -52,4 +52,7 @@
     <string name="note">Note</string>
     <string name="category">Category</string>
     <string name="delete_current_line">Delete current line</string>
+    <string name="loyalty_card">Loyalty Card</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 </resources>
