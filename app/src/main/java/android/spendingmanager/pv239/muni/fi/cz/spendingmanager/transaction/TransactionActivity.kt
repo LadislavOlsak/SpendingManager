@@ -13,7 +13,9 @@ import android.view.ViewGroup
 
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.ListView
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_transaction.*
 import java.math.BigDecimal
 import java.util.*
@@ -21,30 +23,24 @@ import kotlin.collections.ArrayList
 
 class TransactionActivity : AppCompatActivity() {
 
-    /**
-     * The [android.support.v4.view.PagerAdapter] that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * [android.support.v4.app.FragmentStatePagerAdapter].
-     */
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_transaction)
 
-        setSupportActionBar(toolbar)
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
+        //setSupportActionBar(toolbar)
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
 
-        // Set up the ViewPager with the sections adapter.
         container.adapter = mSectionsPagerAdapter
 
         container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
         tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
+        transaction_fab.setOnClickListener { save() }
+    }
+
+    private fun save() {
+        Toast.makeText(this, "FAB Clicked!", Toast.LENGTH_LONG).show()
     }
 
     /**
@@ -62,9 +58,6 @@ class TransactionActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
     class PlaceholderFragment : Fragment() {
 
         private var transactionItems : List<TransactionItem> = mutableListOf()
@@ -96,16 +89,9 @@ class TransactionActivity : AppCompatActivity() {
         }
 
         companion object {
-            /**
-             * The fragment argument representing the section number for this
-             * fragment.
-             */
+
             private val ARG_SECTION_NUMBER = "section_number"
 
-            /**
-             * Returns a new instance of this fragment for the given section
-             * number.
-             */
             fun newInstance(sectionNumber: Int): PlaceholderFragment {
                 val fragment = PlaceholderFragment()
                 val args = Bundle()

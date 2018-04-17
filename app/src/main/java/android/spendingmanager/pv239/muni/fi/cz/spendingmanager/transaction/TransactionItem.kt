@@ -6,6 +6,7 @@ import java.util.*
 class TransactionItem(
         var category : String,
         var price : BigDecimal,
-        var priceCurrency : Currency
+        var priceCurrency : Currency,
+        var date : Date? = null
 ) {
 }

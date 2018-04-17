@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.EditText
+import android.widget.ImageView
 
 class TransactionItemsAdapter(
         private val fragment : Fragment,
@@ -20,7 +21,7 @@ class TransactionItemsAdapter(
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val tramsactionItem = getItem(position)
+        val transactionItem = getItem(position)
 
         var view = convertView
 
@@ -29,7 +30,10 @@ class TransactionItemsAdapter(
         }
 
         val priceEditText = view?.findViewById(R.id.transaction_item_price) as EditText
-        priceEditText.setText(tramsactionItem.price.toString())
+        priceEditText.setText(transactionItem.price.toString())
+
+        val removeTransactionItem = view.findViewById(R.id.transaction_item_delete_iv) as ImageView
+        removeTransactionItem.setOnClickListener { removeItem(position) }
 
         return view
     }
@@ -39,4 +43,10 @@ class TransactionItemsAdapter(
     override fun getItemId(position: Int): Long = position.toLong()
 
     override fun getCount(): Int = items.size
+
+    private fun removeItem(position : Int) {
+        val list = (items as MutableList<TransactionItem>)
+        list.removeAt(position)
+        updateData(list)
+    }
 }
