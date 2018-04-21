@@ -17,6 +17,9 @@ import java.util.*
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.github.mikephil.charting.components.XAxis
 
 
 class StatisticsDateGraphs : Fragment() {
@@ -35,50 +38,57 @@ class StatisticsDateGraphs : Fragment() {
 
         var btnWeekSpinner = view.findViewById<View>(R.id.btnWeeksSpinner) as Button
         btnWeekSpinner.setOnClickListener {
-            //Generate Graph
+            GenerateGraphs(view, weeksSpiner)
         }
+        GenerateGraphs(view, weeksSpiner)
 
-        //Generate Graph
+        return view
+    }
+
+    private fun GenerateGraphs(view: View, weeksSpiner: Spinner)
+    {
+        val weeksIterator : Int = (weeksSpiner.getSelectedItem().toString().toInt() - 1)
+
         val chart = view.findViewById<View>(R.id.chart) as LineChart
+        chart.removeAllViews()
 
-        val xVals : MutableList<Int> = mutableListOf<Int>()
-        for (i in 0..(weeksSpiner.getSelectedItem().toString().toInt() - 1)) {
-            xVals.add(i + 1)
+        val xVals : MutableList<String> = mutableListOf<String>()
+        for (i in 0..weeksIterator) {
+            val iterator : Int = i + 1;
+            xVals.add(iterator.toString())
         }
 
+        var colorsList : List<Int> = StatisticsHelper().GetColors()
 
         // Graph Data
         val dataSets : MutableList<LineDataSet> = mutableListOf<LineDataSet>()
 
         val currentDate = GregorianCalendar.getInstance()
-        var categories : List<Category> = StatisticsHelper().GetCategories()
-        val categoriesListIterator = categories.iterator()
-        while (categoriesListIterator.hasNext()) {
-            val category = categoriesListIterator.next()
-
+        val categories : List<Category> = StatisticsHelper().GetCategories()
+        categories.forEachIndexed { index, category ->
             val yVals : MutableList<Entry> = mutableListOf<Entry>()
 
             var categoryValues: List<Int>
-            for (i in 0..(weeksSpiner.getSelectedItem().toString().toInt() - 1)) {
+            for (i in weeksIterator downTo 0) {
 
                 var date : GregorianCalendar = currentDate.clone() as GregorianCalendar // nutná kopie, jinak se referenčně  pořád čas posouvá
                 val noOfDays = (7 * i)*(-1)
                 date.add(Calendar.DAY_OF_YEAR, noOfDays)
 
-                yVals.add(Entry(i.toFloat(), StatisticsHelper().CalculateValueTransactions(category, 1, date).toFloat()))
+                yVals.add(Entry(weeksIterator - i.toFloat(), StatisticsHelper().CalculateValueTransactions(category, 1, date).toFloat()))
             }
 
             val set: LineDataSet
             set = LineDataSet(yVals, category.categoryName)
             set.setFillAlpha(110)
 
-            set.setColor(Color.BLACK)
-            set.setCircleColor(Color.BLACK)
+            set.setColor(colorsList.get(index % colorsList.count()))
+            set.setCircleColor(colorsList.get(index % colorsList.count()))
             set.setLineWidth(1f)
             set.setCircleRadius(3f)
             set.setDrawCircleHole(false)
             set.setValueTextSize(9f)
-            set.setDrawFilled(true)
+            set.setDrawFilled(false)
 
             dataSets.add(set)
         }
@@ -86,8 +96,22 @@ class StatisticsDateGraphs : Fragment() {
         val lineData = LineData(dataSets.toList())
 
         chart.setData(lineData)
+        chart.getDescription().setEnabled(false)
 
-        return view
+        val xAxis = chart.getXAxis()
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM)
+        xAxis.setDrawGridLines(false)
+        xAxis.setLabelCount(xVals.count(), true)
+        xAxis.setValueFormatter((IAxisValueFormatter { value, axis ->
+            if (value.toInt() < xVals.count())
+            {
+                xVals.get(value.toInt())
+            }
+            else
+            {
+                ""
+            }
+        }))
     }
 
 }

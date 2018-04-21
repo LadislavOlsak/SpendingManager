@@ -1,6 +1,7 @@
 package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.statistics
 
 import android.content.res.Resources
+import android.graphics.Color
 import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.Category
@@ -88,5 +89,21 @@ public class StatisticsHelper {
         val noOfDays = ((7 * weeks) + additionalDay)*(-1)
         date.add(Calendar.DAY_OF_YEAR, noOfDays)
         return date;
+    }
+
+    public fun GetColors () : List<Int>
+    {
+        var colorList  : MutableList<Int>  = mutableListOf<Int>()
+        colorList.add(Color.BLACK)
+        colorList.add(Color.BLUE)
+        colorList.add(Color.GREEN)
+        colorList.add(Color.RED)
+        colorList.add(Color.YELLOW)
+        colorList.add(Color.CYAN)
+        colorList.add(Color.DKGRAY)
+        colorList.add(Color.MAGENTA)
+        colorList.add(Color.GRAY)
+        colorList.add(Color.LTGRAY)
+        return colorList
     }
 }
