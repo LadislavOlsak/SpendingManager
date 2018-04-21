@@ -47,8 +47,10 @@
         <activity
             android:name=".transaction.TransactionActivity"
             android:label="@string/title_activity_transaction1"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".loyaltycards.LoyaltyCardActivity"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".loyaltycards.LoyaltyCardActivity" />
+        <activity android:name=".planning.PlannedTransactionsActivity"
+            android:label="@string/planned_transactions"/>
     </application>
 
 </manifest>

@@ -6,6 +6,7 @@ import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards.Loy
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.CategoriesActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.limits.LimitsActivity
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.planning.PlannedTransactionsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.statistics.StatisticsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionActivity
 import android.support.design.widget.NavigationView
@@ -75,6 +76,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_statistics -> {
                 startActivity(Intent(this, StatisticsActivity::class.java))
+            }
+            R.id.nav_planned_transactions -> {
+                startActivity(Intent(this, PlannedTransactionsActivity::class.java))
             }
         }
 

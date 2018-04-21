@@ -21,6 +21,10 @@
             android:icon="@drawable/ic_error_outline_black_24dp"
             android:title="@string/limits" />
         <item
+            android:id="@+id/nav_planned_transactions"
+            android:icon="@drawable/ic_monetization_on_black_24dp"
+            android:title="@string/planned_transactions" />
+        <item
             android:id="@+id/nav_statistics"
             android:icon="@drawable/chart_line"
             android:title="Statistics" />

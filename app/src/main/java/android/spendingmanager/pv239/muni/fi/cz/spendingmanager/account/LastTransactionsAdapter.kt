@@ -29,7 +29,7 @@ class LastTransactionsAdapter(
         val tranCatTv = view?.findViewById(R.id.account_transaction_item_category_name_tv) as TextView
         tranCatTv.text = transaction.category.categoryName
 
-        val price = view?.findViewById(R.id.account_transaction_item_price_tv) as TextView
+        val price = view.findViewById(R.id.account_transaction_item_price_tv) as TextView
         val sign = if (transaction.amount > 0) "+" else ""
         price.text = "$sign ${transaction.amount} CZK" //todo: remove czk
         val fontColor = if(transaction.amount >= 0) Color.GREEN else Color.RED
