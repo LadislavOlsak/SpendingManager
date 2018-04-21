@@ -55,4 +55,8 @@
     <string name="loyalty_card">Loyalty Card</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="last_transactions">Last Transactions</string>
+    <string name="account_details">Account Details</string>
+    <string name="date">Date</string>
+    <string name="filter_transactions">Filter transactions</string>
 </resources>

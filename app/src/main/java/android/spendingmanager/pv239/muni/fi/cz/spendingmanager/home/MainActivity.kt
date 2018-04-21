@@ -31,10 +31,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         //todo load data
         val accounts = listOf(
-            Account("My Cash Account", Currency.getInstance("CZK"), BigDecimal("1000.0")),
-            Account("EUR Cash Account", Currency.getInstance("EUR"), BigDecimal("120.54")),
-            Account("Polish Cash", Currency.getInstance("PLN"), BigDecimal("680.54")),
-            Account("Bank Account", Currency.getInstance("CZK"), BigDecimal("-28.00"))
+            Account("My Cash Account", Currency.getInstance("CZK"), BigDecimal("1000.0"))
         )
 
         main_accounts_list.adapter = AccountsAdapter(this, accounts)
