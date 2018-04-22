@@ -19,12 +19,6 @@ import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.home.MainActivit
 import android.widget.AdapterView
 
 
-
-
-
-
-
-
 class StatisticsDateOverview : Fragment() {
 
 

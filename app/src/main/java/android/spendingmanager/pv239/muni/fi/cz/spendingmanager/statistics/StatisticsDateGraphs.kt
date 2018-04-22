@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ListView
 import android.widget.Spinner
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
@@ -36,16 +37,35 @@ class StatisticsDateGraphs : Fragment() {
         val spinnerPosition = weeksSpinerAdapter.getPosition("4")
         weeksSpiner.setSelection(spinnerPosition)
 
+        val categoryListView = view.findViewById<View>(R.id.categories_list) as ListView
+        val categories : MutableList<String> = mutableListOf<String>()
+        val categoriesList : List<Category> = StatisticsHelper().GetCategories()
+        categoriesList.forEachIndexed { index, category ->
+            categories.add(category.categoryName)
+        }
+        val categoriesAdapter = ArrayAdapter<String>(getActivity(), R.layout.statistics_date_graphs_catlist, categories)
+        categoryListView.setAdapter(categoriesAdapter)
+        categoryListView.setItemsCanFocus(false)
+        categoryListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE)
+        categoriesList.forEachIndexed { index, category ->
+            categoryListView.setItemChecked(index,true)
+        }
+        // Set categoryListView height (not working automatically)
+        val params = categoryListView.getLayoutParams()
+        params.height = 120 * categoriesList.count()
+        categoryListView.setLayoutParams(params)
+        categoryListView.requestLayout()
+
         var btnWeekSpinner = view.findViewById<View>(R.id.btnWeeksSpinner) as Button
         btnWeekSpinner.setOnClickListener {
-            GenerateGraphs(view, weeksSpiner)
+            GenerateGraphs(view, weeksSpiner, categoryListView)
         }
-        GenerateGraphs(view, weeksSpiner)
+        GenerateGraphs(view, weeksSpiner, categoryListView)
 
         return view
     }
 
-    private fun GenerateGraphs(view: View, weeksSpiner: Spinner)
+    private fun GenerateGraphs(view: View, weeksSpiner: Spinner, categoryListView : ListView)
     {
         val weeksIterator : Int = (weeksSpiner.getSelectedItem().toString().toInt() - 1)
 
@@ -66,31 +86,34 @@ class StatisticsDateGraphs : Fragment() {
         val currentDate = GregorianCalendar.getInstance()
         val categories : List<Category> = StatisticsHelper().GetCategories()
         categories.forEachIndexed { index, category ->
-            val yVals : MutableList<Entry> = mutableListOf<Entry>()
+            if (categoryListView.isItemChecked(index))
+            {
+                val yVals : MutableList<Entry> = mutableListOf<Entry>()
 
-            var categoryValues: List<Int>
-            for (i in weeksIterator downTo 0) {
+                var categoryValues: List<Int>
+                for (i in weeksIterator downTo 0) {
 
-                var date : GregorianCalendar = currentDate.clone() as GregorianCalendar // nutná kopie, jinak se referenčně  pořád čas posouvá
-                val noOfDays = (7 * i)*(-1)
-                date.add(Calendar.DAY_OF_YEAR, noOfDays)
+                    var date : GregorianCalendar = currentDate.clone() as GregorianCalendar // nutná kopie, jinak se referenčně  pořád čas posouvá
+                    val noOfDays = (7 * i)*(-1)
+                    date.add(Calendar.DAY_OF_YEAR, noOfDays)
 
-                yVals.add(Entry(weeksIterator - i.toFloat(), StatisticsHelper().CalculateValueTransactions(category, 1, date).toFloat()))
+                    yVals.add(Entry(weeksIterator - i.toFloat(), StatisticsHelper().CalculateValueTransactions(category, 1, date).toFloat()))
+                }
+
+                val set: LineDataSet
+                set = LineDataSet(yVals, category.categoryName)
+                set.setFillAlpha(110)
+
+                set.setColor(colorsList.get(index % colorsList.count()))
+                set.setCircleColor(colorsList.get(index % colorsList.count()))
+                set.setLineWidth(1f)
+                set.setCircleRadius(3f)
+                set.setDrawCircleHole(false)
+                set.setValueTextSize(9f)
+                set.setDrawFilled(false)
+
+                dataSets.add(set)
             }
-
-            val set: LineDataSet
-            set = LineDataSet(yVals, category.categoryName)
-            set.setFillAlpha(110)
-
-            set.setColor(colorsList.get(index % colorsList.count()))
-            set.setCircleColor(colorsList.get(index % colorsList.count()))
-            set.setLineWidth(1f)
-            set.setCircleRadius(3f)
-            set.setDrawCircleHole(false)
-            set.setValueTextSize(9f)
-            set.setDrawFilled(false)
-
-            dataSets.add(set)
         }
 
         val lineData = LineData(dataSets.toList())

@@ -47,6 +47,16 @@ public class StatisticsHelper {
         return categories;
     }
 
+    public fun GetCategoriesName () : List<String>
+    {
+        val categories : MutableList<String> = mutableListOf<String>()
+        val categoriesList : List<Category> = StatisticsHelper().GetCategories()
+        categoriesList.forEachIndexed { index, category ->
+            categories.add(category.categoryName)
+        }
+        return categories;
+    }
+
     public fun GetTransactions () : List<Transaction>
     {
         return transactions;
