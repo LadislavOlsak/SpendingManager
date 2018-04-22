@@ -62,7 +62,7 @@ public class StatisticsHelper {
         return transactions;
     }
 
-    public fun GetTransactions (category : Category, weeks : Int, endDate : Calendar) : List<Transaction>
+    public fun GetTransactions (category : Category, weeks : Int, endDate : Calendar, hour : Int?) : List<Transaction>
     {
         var transactionsList  : MutableList<Transaction>  = mutableListOf<Transaction>()
 
@@ -74,7 +74,10 @@ public class StatisticsHelper {
             val date = CalculateStartDate(weeks, endDate, 0)
             if (transaction.category.id == category.id && transaction.datetime.time >= date.time && transaction.datetime.time < endDate.time)
             {
-                transactionsList.add(transaction)
+                if (hour == null || transaction.datetime.get(Calendar.HOUR_OF_DAY) == hour)
+                {
+                    transactionsList.add(transaction)
+                }
             }
         }
         return transactionsList;
@@ -83,7 +86,7 @@ public class StatisticsHelper {
     public fun CalculateValueTransactions (category : Category, weeks : Int, date : Calendar) : Int
     {
         var value = 0;
-        val transactionsList = GetTransactions(category, weeks, date)
+        val transactionsList = GetTransactions(category, weeks, date, null)
 
         val transactionsListIterator = transactionsList.iterator()
         while (transactionsListIterator.hasNext()) {
@@ -91,6 +94,12 @@ public class StatisticsHelper {
             value += transaction.amount
         }
         return value;
+    }
+
+    public fun CalculateTimeTransactions (category : Category, weeks : Int, date : Calendar, hour: Int) : Int
+    {
+        val transactionsList = GetTransactions(category, weeks, date, hour)
+        return transactionsList.count();
     }
 
     public fun CalculateStartDate (weeks : Int, endDate : Calendar, additionalDay: Int) : GregorianCalendar
