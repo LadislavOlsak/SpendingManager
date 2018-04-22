@@ -5,7 +5,7 @@ import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.Category
 import java.util.GregorianCalendar;
 
-class Transaction (
+open class Transaction (
         var type : TransactionType,
         var amount : Int,
         var category: Category,

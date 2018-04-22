@@ -55,4 +55,14 @@
     <string name="loyalty_card">Loyalty Card</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="last_transactions">Last Transactions</string>
+    <string name="account_details">Account Details</string>
+    <string name="date">Date</string>
+    <string name="filter_transactions">Filter transactions</string>
+    <string name="planned_transactions">Planned Transactions</string>
+    <string name="planned_expenses">Planned Expenses</string>
+    <string name="frequency">Frequency</string>
+    <string name="planned_income">Planned Income</string>
+    <string name="add_new_planned_income">Add New Planned Income</string>
+    <string name="add_new_planned_expense">Add New Planned Expense</string>
 </resources>
