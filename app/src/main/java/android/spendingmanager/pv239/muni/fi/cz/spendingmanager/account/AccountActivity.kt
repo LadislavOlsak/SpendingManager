@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.home.MainActivity
 import android.widget.Toast
+import com.google.android.gms.maps.model.LatLng
 
 
 class AccountActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
@@ -132,11 +133,11 @@ class AccountActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener 
         )
 
         return listOf(
-                Transaction(TransactionType.EXPENDITURE, -250, categories.get(0), "Some meet and fruits", GregorianCalendar(2018, 3, 12, 12, 34) ,"" ),
-                Transaction(TransactionType.EXPENDITURE, -80, categories.get(1), "Some meet and fruits", GregorianCalendar(2018, 3, 13, 11, 21) ,"" ),
-                Transaction(TransactionType.EXPENDITURE, -40, categories.get(2), "Bread and rolls", GregorianCalendar(2018, 3, 13, 11, 22) ,"" ),
-                Transaction(TransactionType.EXPENDITURE, -850, categories.get(3), "Everything", GregorianCalendar(2018, 3, 16, 13, 50) ,"" ),
-                Transaction(TransactionType.EXPENDITURE, -563, categories.get(4), "Something...", GregorianCalendar(2018, 3, 25, 12, 40) ,"" )
+                Transaction(TransactionType.EXPENDITURE, -250, categories.get(0), "Some meet and fruits", GregorianCalendar(2018, 3, 12, 12, 34) , LatLng(49.3, 16.6) ),
+                Transaction(TransactionType.EXPENDITURE, -80, categories.get(1), "Some meet and fruits", GregorianCalendar(2018, 3, 13, 11, 21) ,LatLng(49.3, 16.6) ),
+                Transaction(TransactionType.EXPENDITURE, -40, categories.get(2), "Bread and rolls", GregorianCalendar(2018, 3, 13, 11, 22) ,LatLng(49.3, 16.6) ),
+                Transaction(TransactionType.EXPENDITURE, -850, categories.get(3), "Everything", GregorianCalendar(2018, 3, 16, 13, 50) ,LatLng(49.3, 16.6) ),
+                Transaction(TransactionType.EXPENDITURE, -563, categories.get(4), "Something...", GregorianCalendar(2018, 3, 25, 12, 40) ,LatLng(49.3, 16.67) )
           )
 
     }
