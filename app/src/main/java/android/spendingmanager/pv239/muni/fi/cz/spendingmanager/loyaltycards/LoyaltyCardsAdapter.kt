@@ -69,7 +69,7 @@ class LoyaltyCardsAdapter(
     }
 
     private fun getBorderDrawable(): Drawable {
-        return ContextCompat.getDrawable(context, R.drawable.customborder)
+        return ContextCompat.getDrawable(context, R.drawable.customborder) as Drawable
     }
 
     private fun startNewLoyaltyCardActivity(loyaltyCard : LoyaltyCard) {

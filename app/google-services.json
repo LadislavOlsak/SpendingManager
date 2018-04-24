@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "556721410403",
+    "firebase_url": "https://spendingmanager-19e72.firebaseio.com",
+    "project_id": "spendingmanager-19e72",
+    "storage_bucket": "spendingmanager-19e72.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:556721410403:android:337adcf4ecf464c9",
+        "android_client_info": {
+          "package_name": "android.spendingmanager.pv239.muni.fi.cz.spendingmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "556721410403-qrdj0q8mgaltmohm0kqggra8ok78onhb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "android.spendingmanager.pv239.muni.fi.cz.spendingmanager",
+            "certificate_hash": "95c42ea157bb976c5cf94538438747269e22db88"
+          }
+        },
+        {
+          "client_id": "556721410403-agrdpi73pd09lkfj0tcdmmo4q1gtiv0p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClm7jWz9wu0mGWB9Ud5t3MOfu12U86o58"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "556721410403-agrdpi73pd09lkfj0tcdmmo4q1gtiv0p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

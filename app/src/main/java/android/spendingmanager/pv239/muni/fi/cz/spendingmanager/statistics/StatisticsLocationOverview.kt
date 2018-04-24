@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
 import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
@@ -22,7 +23,7 @@ class StatisticsLocationOverview : Fragment() {
         statisticsLocationTabs.tabGravity = TabLayout.GRAVITY_FILL
 
         val statisticsLocationViewpager = view.findViewById<View>(R.id.statistics_location_viewpager) as ViewPager
-        val statisticsLocationAdapter = StatisticsLocationPagerAdapter(getFragmentManager(), statisticsLocationTabs.tabCount)
+        val statisticsLocationAdapter = StatisticsLocationPagerAdapter(getFragmentManager() as FragmentManager, statisticsLocationTabs.tabCount)
         statisticsLocationViewpager.adapter = statisticsLocationAdapter
         statisticsLocationViewpager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(statisticsLocationTabs))
         statisticsLocationTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {

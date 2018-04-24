@@ -16,6 +16,7 @@ import java.util.*
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.home.MainActivity
+import android.support.v4.app.FragmentManager
 import android.widget.AdapterView
 
 
@@ -33,7 +34,7 @@ class StatisticsDateOverview : Fragment() {
         statisticsDateTabs.tabGravity = TabLayout.GRAVITY_FILL
 
         val statisticsDateViewpager = view.findViewById<View>(R.id.statistics_date_viewpager) as ViewPager
-        val statisticsDateAdapter = StatisticsDatePagerAdapter(getFragmentManager(), statisticsDateTabs.tabCount)
+        val statisticsDateAdapter = StatisticsDatePagerAdapter(getFragmentManager() as FragmentManager, statisticsDateTabs.tabCount)
         statisticsDateViewpager.adapter = statisticsDateAdapter
         statisticsDateViewpager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(statisticsDateTabs))
         statisticsDateTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {

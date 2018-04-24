@@ -64,7 +64,7 @@ class NewLoyaltyCardActivity (
     }
 
     private fun getBorderDrawable(): Drawable {
-        return ContextCompat.getDrawable(this, R.drawable.customborder)
+        return ContextCompat.getDrawable(this, R.drawable.customborder) as Drawable
     }
 
     private fun setHandlers() {
