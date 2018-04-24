@@ -46,6 +46,7 @@ class StatisticsLocationTransactionsAmount : Fragment(), OnMapReadyCallback {
 
         mMap = googleMap
         mClusterManager = ClusterManager<StatisticsClusterItem>( getActivity(), mMap)
+        mClusterManager.renderer = StatisticsClusterManager(context, mMap, mClusterManager, false)
 
         var latList : MutableList<Double> = mutableListOf<Double>()
         var lngList : MutableList<Double> = mutableListOf<Double>()
@@ -56,7 +57,7 @@ class StatisticsLocationTransactionsAmount : Fragment(), OnMapReadyCallback {
             //mMap.addMarker(MarkerOptions().position(location).title(transaction.category.categoryName + ": " + transaction.amount))
             latList.add(location.latitude)
             lngList.add(location.longitude)
-            val offsetItem = StatisticsClusterItem(location.latitude, location.longitude)
+            val offsetItem = StatisticsClusterItem(location.latitude, location.longitude, transaction.amount)
             mClusterManager.addItem(offsetItem)
         }
 

@@ -2,6 +2,7 @@ package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.statistics
 
 import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.Transaction
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.maps.android.clustering.ClusterManager
 
 class StatisticsLocationTransactionsValue : Fragment(), OnMapReadyCallback {
 
@@ -38,12 +40,30 @@ class StatisticsLocationTransactionsValue : Fragment(), OnMapReadyCallback {
      * installed Google Play services and returned to the app.
      */
     override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
+        val mClusterManager: ClusterManager<StatisticsClusterItem>
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        mMap = googleMap
+        mClusterManager = ClusterManager<StatisticsClusterItem>( getActivity(), mMap)
+        mClusterManager.renderer = StatisticsClusterManager(context, mMap, mClusterManager, true)
+
+        var latList : MutableList<Double> = mutableListOf<Double>()
+        var lngList : MutableList<Double> = mutableListOf<Double>()
+
+        val transactions : List<Transaction> = StatisticsHelper().GetTransactions()
+        transactions.forEachIndexed { index, transaction ->
+            val location = transaction.position
+            //mMap.addMarker(MarkerOptions().position(location).title(transaction.category.categoryName + ": " + transaction.amount))
+            latList.add(location.latitude)
+            lngList.add(location.longitude)
+            val offsetItem = StatisticsClusterItem(location.latitude, location.longitude, transaction.category.categoryName + ": " + transaction.amount, "",  transaction.amount)
+            mClusterManager.addItem(offsetItem)
+        }
+
+        val center = LatLng(latList.average(), lngList.average())
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(center))
+
+        mMap.setOnCameraIdleListener(mClusterManager)
+        mMap.setOnMarkerClickListener(mClusterManager)
     }
 
 }
