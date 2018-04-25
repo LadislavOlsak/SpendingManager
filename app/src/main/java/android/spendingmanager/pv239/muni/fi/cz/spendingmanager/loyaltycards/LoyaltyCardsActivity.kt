@@ -5,9 +5,13 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.ScanActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.ViewMode
 import android.support.v7.app.AppCompatActivity
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_loyalty_cards.*
 import kotlinx.android.synthetic.main.loyalty_card_item.*
@@ -16,6 +20,7 @@ class LoyaltyCardsActivity : AppCompatActivity() {
 
     private val SCAN_ACTIVITY_REQUEST_CODE = 1
     private val parameterName = "membership_number"
+    private var adapter : LoyaltyCardsAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,16 +30,27 @@ class LoyaltyCardsActivity : AppCompatActivity() {
     }
 
     private fun setListeners() {
-        val loyaltyCards = listOf(
-                LoyaltyCard("501928794164", "MultiSport", Color.BLUE),
-                LoyaltyCard("971R8B261", "Billa", Color.MAGENTA),
-                LoyaltyCard("1234567890", "Tesco", Color.YELLOW),
-                LoyaltyCard("S421234567890", "ISIC", Color.GREEN)
-        )
-        loyalty_cards_list.adapter = LoyaltyCardsAdapter(this, loyaltyCards)
+        adapter = LoyaltyCardsAdapter(this, emptyList())
+        loyalty_cards_list.adapter = adapter
+
+        val cardsListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val loyaltyCards = mutableListOf<LoyaltyCard>()
+                dataSnapshot.children.mapNotNullTo(loyaltyCards) {
+                    val card = it.getValue<LoyaltyCard>(LoyaltyCard::class.java)
+                    card?.key = it.key
+                    card
+                }
+                adapter?.update(loyaltyCards)
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                println("loadPost:onCancelled ${databaseError.toException()}")
+            }
+        }
+        FirebaseDb.getUserReference("loyaltycards")?.addValueEventListener(cardsListener)
 
         fab.setOnClickListener { startScanActivity() }
-        loyalty_cards_list.setOnItemClickListener { adapterView, view, i, l ->
+        loyalty_cards_list.setOnItemClickListener { _, _, i, _ ->
             val selectedCard = loyalty_cards_list.adapter.getItem(i) as LoyaltyCard
             startLoyaltyCardActivity(selectedCard)
         }

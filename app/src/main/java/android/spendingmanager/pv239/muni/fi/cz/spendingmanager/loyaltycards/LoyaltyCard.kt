@@ -10,4 +10,9 @@ class LoyaltyCard(
         var photoFrontFilePath : String? = null,
         var photoBackFilePath : String? = null
 ) {
+    var key : String? = null
+
+    constructor() : this("", "", 0, "", "") {
+
+    }
 }

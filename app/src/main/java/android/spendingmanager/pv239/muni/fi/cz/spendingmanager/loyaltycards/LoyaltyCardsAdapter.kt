@@ -18,6 +18,7 @@ import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import android.graphics.drawable.Drawable
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.ViewMode
 import android.support.v4.content.ContextCompat
 import com.google.gson.Gson
@@ -31,6 +32,12 @@ class LoyaltyCardsAdapter(
         private val context: Context,
         private var loyaltyCards : List<LoyaltyCard>
 ) : BaseAdapter() {
+
+    fun update(list : List<LoyaltyCard>) {
+        loyaltyCards = list
+        notifyDataSetChanged()
+    }
+
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
         val loyaltyCard = getItem(position)
 
@@ -88,6 +95,7 @@ class LoyaltyCardsAdapter(
                     run{
                         //todo delete
                         Toast.makeText(context, "Card \"" + loyaltyCard.cardName + "\" deleted.", Toast.LENGTH_SHORT).show()
+                        FirebaseDb().deleteObject("loyaltycards/", loyaltyCard.key)
                     }
                 })
                 .setNegativeButton("No", DialogInterface.OnClickListener { dialogInterface, i ->

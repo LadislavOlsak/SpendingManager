@@ -1,5 +1,6 @@
 package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.statistics
 
+import android.content.Context
 import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.Transaction
@@ -46,7 +47,7 @@ class StatisticsLocationTransactionsAmount : Fragment(), OnMapReadyCallback {
 
         mMap = googleMap
         mClusterManager = ClusterManager<StatisticsClusterItem>( getActivity(), mMap)
-        mClusterManager.renderer = StatisticsClusterManager(context, mMap, mClusterManager, false)
+        mClusterManager.renderer = StatisticsClusterManager(context as Context, mMap, mClusterManager, false)
 
         var latList : MutableList<Double> = mutableListOf<Double>()
         var lngList : MutableList<Double> = mutableListOf<Double>()

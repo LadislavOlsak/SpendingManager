@@ -2,25 +2,25 @@ package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards
 
 import android.app.Activity
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_new_loyalty_card.*
 import android.provider.MediaStore
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.ColorPickingActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.ColorPickerFragment
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.ViewMode
 import android.support.v4.content.ContextCompat
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
+import com.google.firebase.database.DatabaseReference
 import com.google.gson.Gson
 import com.snatik.storage.Storage
 import kotlinx.android.synthetic.main.loyalty_card_item.*
@@ -36,7 +36,7 @@ class NewLoyaltyCardActivity (
         private var isFrontPicture : Boolean? = null
 ) : ColorPickingActivity()  {
 
-    private var cardColor : Int? = null
+    private var cardColor : Int = Color.WHITE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,6 +87,43 @@ class NewLoyaltyCardActivity (
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
         })
+        new_loyalty_card_submit_btn.setOnClickListener { saveLoyaltyCard() }
+    }
+
+    private fun saveLoyaltyCard() {
+        val loyaltyCard = getPassedLoyaltyCard()
+        if(loyaltyCard == null) {
+            //new card
+            saveNewLoyaltyCard()
+        } else {
+            updateLoyaltyCard(loyaltyCard)
+        }
+    }
+
+    private fun buildLoyaltyCardFromInput(loyaltyCard: LoyaltyCard) {
+        loyaltyCard.cardName = new_loyalty_card_name.text.toString()
+        loyaltyCard.cardNumber = new_loyalty_card_number.text.toString()
+        loyaltyCard.color = cardColor
+    }
+
+    private fun saveNewLoyaltyCard() {
+        val newLoyaltyCard = LoyaltyCard()
+        buildLoyaltyCardFromInput(newLoyaltyCard)
+        FirebaseDb().createObject("loyaltycards", newLoyaltyCard)
+        finish()
+    }
+
+    private fun updateLoyaltyCard(loyaltyCard : LoyaltyCard) {
+        buildLoyaltyCardFromInput(loyaltyCard)
+
+        FirebaseDb().updateObject("loyaltycards/", loyaltyCard.key, loyaltyCard, (
+            DatabaseReference.CompletionListener { firebaseError, reference ->
+                if(firebaseError != null) {
+                    Toast.makeText(this@NewLoyaltyCardActivity, "Data could not be saved.", Toast.LENGTH_LONG).show()
+                } else {
+                    this@NewLoyaltyCardActivity.finish()
+                }
+            }))
     }
 
     private fun takePicture(isFront : Boolean) {
@@ -162,8 +199,16 @@ class NewLoyaltyCardActivity (
         }
     }
 
+    private fun getPassedLoyaltyCard() : LoyaltyCard? {
+        val card = intent.getStringExtra("card")
+        if(card != null) {
+            return Gson().fromJson(card, LoyaltyCard::class.java)
+        }
+        return null
+    }
+
     private fun setCardDetails() {
-        val loyaltyCard = Gson().fromJson(intent.getStringExtra("card"), LoyaltyCard::class.java)
+        val loyaltyCard = getPassedLoyaltyCard() as LoyaltyCard
         new_loyalty_card_name.setText(loyaltyCard.cardName)
         new_loyalty_card_number.setText(loyaltyCard.cardNumber)
         setPreviewCardName(loyaltyCard.cardName)

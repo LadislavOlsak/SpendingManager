@@ -2,13 +2,16 @@ package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.home
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards.LoyaltyCardsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.CategoriesActivity
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.limits.LimitsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.login.LoginActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.login.UserData
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards.LoyaltyCard
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.planning.PlannedTransactionsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.statistics.StatisticsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionActivity
