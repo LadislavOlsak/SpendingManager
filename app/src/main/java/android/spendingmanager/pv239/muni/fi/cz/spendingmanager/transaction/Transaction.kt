@@ -4,16 +4,18 @@ import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.Category
 import com.google.android.gms.maps.model.LatLng
-import java.util.GregorianCalendar;
+import java.math.BigDecimal
+import java.util.*
 
 open class Transaction (
         var type : TransactionType,
-        var amount : Int,
+        var price : Int,
         var category: Category,
         var description: String,
         var datetime: GregorianCalendar,
-        var position: LatLng
-) {
+        var position: LatLng,
+        var priceCurrency : Currency
+        ) {
 }
 
 enum class TransactionType {

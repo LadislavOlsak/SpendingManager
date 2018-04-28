@@ -56,7 +56,7 @@ class StatisticsLocationTransactionsValue : Fragment(), OnMapReadyCallback {
             //mMap.addMarker(MarkerOptions().position(location).title(transaction.category.categoryName + ": " + transaction.amount))
             latList.add(location.latitude)
             lngList.add(location.longitude)
-            val offsetItem = StatisticsClusterItem(location.latitude, location.longitude, transaction.category.categoryName + ": " + transaction.amount, "",  transaction.amount)
+            val offsetItem = StatisticsClusterItem(location.latitude, location.longitude, transaction.category.categoryName + ": " + transaction.price, "",  transaction.price)
             mClusterManager.addItem(offsetItem)
         }
 

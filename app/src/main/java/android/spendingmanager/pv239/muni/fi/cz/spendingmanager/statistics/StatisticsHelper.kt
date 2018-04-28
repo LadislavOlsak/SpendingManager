@@ -24,31 +24,31 @@ public class StatisticsHelper {
                 Category("shopping", "shopping", CategoryType.DEFAULT))
 
         transactions = listOf(
-                Transaction(TransactionType.EXPENDITURE, 2500, categories.get(1), "Something...", GregorianCalendar(2018, 1-1, 25, 19, 20), LatLng(49.247, 16.685) ),
-                Transaction(TransactionType.EXPENDITURE, 1500, categories.get(1), "Something...", GregorianCalendar(2018, 2-1, 25, 18, 30), LatLng(49.385, 16.665) ),
-                Transaction(TransactionType.EXPENDITURE, 1800, categories.get(1), "Something...", GregorianCalendar(2018, 3-1, 25, 18, 30), LatLng(49.225, 16.889) ),
-                Transaction(TransactionType.EXPENDITURE, 3000, categories.get(1), "Something...", GregorianCalendar(2018, 4-1, 10, 18, 55), LatLng(49.213, 16.789) ),
-                Transaction(TransactionType.EXPENDITURE, 250, categories.get(0), "Some meet and fruits", GregorianCalendar(2018, 3-1, 12, 12, 34),LatLng(52.248, 17.685) ),
-                Transaction(TransactionType.EXPENDITURE, 80, categories.get(0), "Some meet and fruits", GregorianCalendar(2018, 3-1, 13, 11, 21),LatLng(60.247, 15.669) ),
-                Transaction(TransactionType.EXPENDITURE, 40, categories.get(0), "Bread and rolls", GregorianCalendar(2018, 3-1, 13, 11, 22),LatLng(49.247, 16.458) ),
-                Transaction(TransactionType.EXPENDITURE, 850, categories.get(0), "Everything", GregorianCalendar(2018, 3-1, 16, 13, 50),LatLng(49.269, 16.447) ),
-                Transaction(TransactionType.EXPENDITURE, 563, categories.get(0), "Something...", GregorianCalendar(2018, 3-1, 25, 12, 40),LatLng(49.651, 16.569) ),
-                Transaction(TransactionType.EXPENDITURE, 85, categories.get(0), "Something...", GregorianCalendar(2018, 3-1, 28, 16, 23),LatLng(49.374, 16.786) ),
-                Transaction(TransactionType.EXPENDITURE, 420, categories.get(0), "Something...", GregorianCalendar(2018, 4-1, 2, 9, 20),LatLng(49.295, 16.366) ),
-                Transaction(TransactionType.EXPENDITURE, 236, categories.get(0), "Something...", GregorianCalendar(2018, 4-1, 6, 12, 20),LatLng(49.418, 16.346) )
+                Transaction(TransactionType.EXPENDITURE, 2500, categories.get(1), "Something...", GregorianCalendar(2018, 1-1, 25, 19, 20), LatLng(49.247, 16.685), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 1500, categories.get(1), "Something...", GregorianCalendar(2018, 2-1, 25, 18, 30), LatLng(49.385, 16.665), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 1800, categories.get(1), "Something...", GregorianCalendar(2018, 3-1, 25, 18, 30), LatLng(49.225, 16.889), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 3000, categories.get(1), "Something...", GregorianCalendar(2018, 4-1, 10, 18, 55), LatLng(49.213, 16.789), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 250, categories.get(0), "Some meet and fruits", GregorianCalendar(2018, 3-1, 12, 12, 34),LatLng(52.248, 17.685), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 80, categories.get(0), "Some meet and fruits", GregorianCalendar(2018, 3-1, 13, 11, 21),LatLng(60.247, 15.669), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 40, categories.get(0), "Bread and rolls", GregorianCalendar(2018, 3-1, 13, 11, 22),LatLng(49.247, 16.458), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 850, categories.get(0), "Everything", GregorianCalendar(2018, 3-1, 16, 13, 50),LatLng(49.269, 16.447), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 563, categories.get(0), "Something...", GregorianCalendar(2018, 3-1, 25, 12, 40),LatLng(49.651, 16.569), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 85, categories.get(0), "Something...", GregorianCalendar(2018, 3-1, 28, 16, 23),LatLng(49.374, 16.786), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 420, categories.get(0), "Something...", GregorianCalendar(2018, 4-1, 2, 9, 20),LatLng(49.295, 16.366), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 236, categories.get(0), "Something...", GregorianCalendar(2018, 4-1, 6, 12, 20),LatLng(49.418, 16.346), Currency.getInstance("CZK" ))
 
-                ,Transaction(TransactionType.EXPENDITURE, 2500, categories.get(1), "Something...", GregorianCalendar(2018, 1-1, 25, 19, 20), LatLng(49.247, 16.685) ),
-                Transaction(TransactionType.EXPENDITURE, 1500, categories.get(1), "Something...", GregorianCalendar(2018, 2-1, 25, 18, 30), LatLng(49.385, 16.665) ),
-                Transaction(TransactionType.EXPENDITURE, 1800, categories.get(1), "Something...", GregorianCalendar(2018, 3-1, 25, 18, 30), LatLng(49.225, 16.889) ),
-                Transaction(TransactionType.EXPENDITURE, 3000, categories.get(1), "Something...", GregorianCalendar(2018, 4-1, 10, 18, 55), LatLng(49.213, 16.789) ),
-                Transaction(TransactionType.EXPENDITURE, 250, categories.get(0), "Some meet and fruits", GregorianCalendar(2018, 3-1, 12, 12, 34),LatLng(52.248, 17.685) ),
-                Transaction(TransactionType.EXPENDITURE, 80, categories.get(0), "Some meet and fruits", GregorianCalendar(2018, 3-1, 13, 11, 21),LatLng(60.247, 15.669) ),
-                Transaction(TransactionType.EXPENDITURE, 40, categories.get(0), "Bread and rolls", GregorianCalendar(2018, 3-1, 13, 11, 22),LatLng(49.247, 16.458) ),
-                Transaction(TransactionType.EXPENDITURE, 850, categories.get(0), "Everything", GregorianCalendar(2018, 3-1, 16, 13, 50),LatLng(49.269, 16.447) ),
-                Transaction(TransactionType.EXPENDITURE, 563, categories.get(0), "Something...", GregorianCalendar(2018, 3-1, 25, 12, 40),LatLng(49.651, 16.569) ),
-                Transaction(TransactionType.EXPENDITURE, 85, categories.get(0), "Something...", GregorianCalendar(2018, 3-1, 28, 16, 23),LatLng(49.374, 16.786) ),
-                Transaction(TransactionType.EXPENDITURE, 420, categories.get(0), "Something...", GregorianCalendar(2018, 4-1, 2, 9, 20),LatLng(49.295, 16.366) ),
-                Transaction(TransactionType.EXPENDITURE, 236, categories.get(0), "Something...", GregorianCalendar(2018, 4-1, 6, 12, 20),LatLng(49.418, 16.346) )
+                ,Transaction(TransactionType.EXPENDITURE, 2500, categories.get(1), "Something...", GregorianCalendar(2018, 1-1, 25, 19, 20), LatLng(49.247, 16.685), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 1500, categories.get(1), "Something...", GregorianCalendar(2018, 2-1, 25, 18, 30), LatLng(49.385, 16.665), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 1800, categories.get(1), "Something...", GregorianCalendar(2018, 3-1, 25, 18, 30), LatLng(49.225, 16.889), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 3000, categories.get(1), "Something...", GregorianCalendar(2018, 4-1, 10, 18, 55), LatLng(49.213, 16.789), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 250, categories.get(0), "Some meet and fruits", GregorianCalendar(2018, 3-1, 12, 12, 34),LatLng(52.248, 17.685), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 80, categories.get(0), "Some meet and fruits", GregorianCalendar(2018, 3-1, 13, 11, 21),LatLng(60.247, 15.669), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 40, categories.get(0), "Bread and rolls", GregorianCalendar(2018, 3-1, 13, 11, 22),LatLng(49.247, 16.458), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 850, categories.get(0), "Everything", GregorianCalendar(2018, 3-1, 16, 13, 50),LatLng(49.269, 16.447), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 563, categories.get(0), "Something...", GregorianCalendar(2018, 3-1, 25, 12, 40),LatLng(49.651, 16.569), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 85, categories.get(0), "Something...", GregorianCalendar(2018, 3-1, 28, 16, 23),LatLng(49.374, 16.786), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 420, categories.get(0), "Something...", GregorianCalendar(2018, 4-1, 2, 9, 20),LatLng(49.295, 16.366), Currency.getInstance("CZK" )),
+                Transaction(TransactionType.EXPENDITURE, 236, categories.get(0), "Something...", GregorianCalendar(2018, 4-1, 6, 12, 20),LatLng(49.418, 16.346), Currency.getInstance("CZK" ))
 
         )
     }
@@ -105,7 +105,7 @@ public class StatisticsHelper {
         val transactionsListIterator = transactionsList.iterator()
         while (transactionsListIterator.hasNext()) {
             val transaction = transactionsListIterator.next()
-            value += transaction.amount
+            value += transaction.price
         }
         return value;
     }

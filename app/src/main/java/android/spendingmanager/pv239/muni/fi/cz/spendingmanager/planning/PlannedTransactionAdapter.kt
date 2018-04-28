@@ -36,7 +36,7 @@ class PlannedTransactionAdapter(
         noteTv.text = plannedTransaction.description
 
         val priceTv = view.findViewById(R.id.planned_transaction_item_price_tv) as TextView
-        priceTv.text = "${plannedTransaction.amount} CZK"
+        priceTv.text = "${plannedTransaction.price} CZK"
 
         val frequencyTv = view.findViewById(R.id.planned_transaction_item_frequency_tv) as TextView
         frequencyTv.text = plannedTransaction.frequency.toString()

@@ -13,7 +13,7 @@ class PlannedTransaction : Transaction {
 
     constructor(
             frequency : TransactionFrequency
-    ) : super(TransactionType.EXPENDITURE, 250, Category("id", "Lunch", CategoryType.DEFAULT), "Some meet and fruits", GregorianCalendar(2018, 3, 12, 12, 34) , LatLng(49.3, 16.6) ) {
+    ) : super(TransactionType.EXPENDITURE, 250, Category("id", "Lunch", CategoryType.DEFAULT), "Some meet and fruits", GregorianCalendar(2018, 3, 12, 12, 34) , LatLng(49.3, 16.6), Currency.getInstance("CZK" )) {
         this.frequency = frequency
     }
 }

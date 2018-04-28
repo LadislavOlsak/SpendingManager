@@ -30,9 +30,9 @@ class LastTransactionsAdapter(
         tranCatTv.text = transaction.category.categoryName
 
         val price = view.findViewById(R.id.account_transaction_item_price_tv) as TextView
-        val sign = if (transaction.amount > 0) "+" else ""
-        price.text = "$sign ${transaction.amount} CZK" //todo: remove czk
-        val fontColor = if(transaction.amount >= 0) Color.GREEN else Color.RED
+        val sign = if (transaction.price > 0) "+" else ""
+        price.text = "$sign ${transaction.price} CZK" //todo: remove czk
+        val fontColor = if(transaction.price >= 0) Color.GREEN else Color.RED
         price.setTextColor(fontColor)
 
         val dateFormatter = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
