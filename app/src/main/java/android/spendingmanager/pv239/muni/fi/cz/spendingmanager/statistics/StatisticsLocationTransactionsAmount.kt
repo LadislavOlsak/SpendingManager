@@ -55,11 +55,15 @@ class StatisticsLocationTransactionsAmount : Fragment(), OnMapReadyCallback {
         val transactions : List<Transaction> = StatisticsHelper().GetTransactions()
         transactions.forEachIndexed { index, transaction ->
             val location = transaction.position
-            //mMap.addMarker(MarkerOptions().position(location).title(transaction.category.categoryName + ": " + transaction.amount))
-            latList.add(location.latitude)
-            lngList.add(location.longitude)
-            val offsetItem = StatisticsClusterItem(location.latitude, location.longitude, transaction.price)
-            mClusterManager.addItem(offsetItem)
+            if (location != null)
+            {
+                //mMap.addMarker(MarkerOptions().position(location).title(transaction.category.categoryName + ": " + transaction.amount))
+                latList.add(location.latitude)
+                lngList.add(location.longitude)
+                val offsetItem = StatisticsClusterItem(location.latitude, location.longitude, transaction.price)
+                mClusterManager.addItem(offsetItem)
+            }
+
         }
 
         val center = LatLng(latList.average(), lngList.average())

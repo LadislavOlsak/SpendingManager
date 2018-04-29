@@ -20,10 +20,10 @@ import com.google.firebase.database.ValueEventListener
 
 class TransactionItemsAdapter(
         private val fragment : Fragment,
-        var items : List<TransactionItem>
+        var items : List<Transaction>
 ) : BaseAdapter() {
 
-    fun updateData(items : List<TransactionItem>) {
+    fun updateData(items : List<Transaction>) {
         this.items = items
         notifyDataSetChanged()
     }
@@ -37,7 +37,7 @@ class TransactionItemsAdapter(
             view = LayoutInflater.from(fragment.context).inflate(R.layout.transaction_item, parent, false)
         }
 
-        val categorySpinner = view?.findViewById(R.id.transaction_item_category) as AppCompatSpinner
+        val categorySpinner = view?.findViewById<View>(R.id.transaction_item_category) as AppCompatSpinner
         //val weeksSpiner = view.findViewById<View>(R.id.weeksSpinner) as Spinner
 
         val categoryAdapter: ArrayAdapter<String>
@@ -67,23 +67,23 @@ class TransactionItemsAdapter(
                 mTestArray)
         categorySpinner.setAdapter(categoryAdapter)
 
-        val priceEditText = view?.findViewById(R.id.transaction_item_price) as EditText
+        val priceEditText = view?.findViewById<View>(R.id.transaction_item_price) as EditText
         priceEditText.setText(transactionItem.price.toString())
 
-        val removeTransactionItem = view.findViewById(R.id.transaction_item_delete_iv) as ImageView
+        val removeTransactionItem = view.findViewById<View>(R.id.transaction_item_delete_iv) as ImageView
         removeTransactionItem.setOnClickListener { removeItem(position) }
 
         return view
     }
 
-    override fun getItem(position: Int): TransactionItem = items[position]
+    override fun getItem(position: Int): Transaction = items[position]
 
     override fun getItemId(position: Int): Long = position.toLong()
 
     override fun getCount(): Int = items.size
 
     private fun removeItem(position : Int) {
-        val list = (items as MutableList<TransactionItem>)
+        val list = (items as MutableList<Transaction>)
         list.removeAt(position)
         updateData(list)
     }
