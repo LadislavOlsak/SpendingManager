@@ -6,9 +6,13 @@ import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.Category
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.CategoryType
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.Transaction
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionType
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import java.util.*
 
 
@@ -23,38 +27,52 @@ public class StatisticsHelper {
                 Category("others", "others", CategoryType.DEFAULT),
                 Category("shopping", "shopping", CategoryType.DEFAULT))
 
-        transactions = listOf(
-                Transaction(TransactionType.EXPENDITURE, 2500, categories.get(1), "Something...", GregorianCalendar(2018, 1-1, 25, 19, 20), LatLng(49.247, 16.685), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 1500, categories.get(1), "Something...", GregorianCalendar(2018, 2-1, 25, 18, 30), LatLng(49.385, 16.665), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 1800, categories.get(1), "Something...", GregorianCalendar(2018, 3-1, 25, 18, 30), LatLng(49.225, 16.889), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 3000, categories.get(1), "Something...", GregorianCalendar(2018, 4-1, 10, 18, 55), LatLng(49.213, 16.789), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 250, categories.get(0), "Some meet and fruits", GregorianCalendar(2018, 3-1, 12, 12, 34),LatLng(52.248, 17.685), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 80, categories.get(0), "Some meet and fruits", GregorianCalendar(2018, 3-1, 13, 11, 21),LatLng(60.247, 15.669), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 40, categories.get(0), "Bread and rolls", GregorianCalendar(2018, 3-1, 13, 11, 22),LatLng(49.247, 16.458), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 850, categories.get(0), "Everything", GregorianCalendar(2018, 3-1, 16, 13, 50),LatLng(49.269, 16.447), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 563, categories.get(0), "Something...", GregorianCalendar(2018, 3-1, 25, 12, 40),LatLng(49.651, 16.569), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 85, categories.get(0), "Something...", GregorianCalendar(2018, 3-1, 28, 16, 23),LatLng(49.374, 16.786), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 420, categories.get(0), "Something...", GregorianCalendar(2018, 4-1, 2, 9, 20),LatLng(49.295, 16.366), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 236, categories.get(0), "Something...", GregorianCalendar(2018, 4-1, 6, 12, 20),LatLng(49.418, 16.346), Currency.getInstance("CZK" ))
-
-                ,Transaction(TransactionType.EXPENDITURE, 2500, categories.get(1), "Something...", GregorianCalendar(2018, 1-1, 25, 19, 20), LatLng(49.247, 16.685), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 1500, categories.get(1), "Something...", GregorianCalendar(2018, 2-1, 25, 18, 30), LatLng(49.385, 16.665), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 1800, categories.get(1), "Something...", GregorianCalendar(2018, 3-1, 25, 18, 30), LatLng(49.225, 16.889), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 3000, categories.get(1), "Something...", GregorianCalendar(2018, 4-1, 10, 18, 55), LatLng(49.213, 16.789), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 250, categories.get(0), "Some meet and fruits", GregorianCalendar(2018, 3-1, 12, 12, 34),LatLng(52.248, 17.685), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 80, categories.get(0), "Some meet and fruits", GregorianCalendar(2018, 3-1, 13, 11, 21),LatLng(60.247, 15.669), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 40, categories.get(0), "Bread and rolls", GregorianCalendar(2018, 3-1, 13, 11, 22),LatLng(49.247, 16.458), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 850, categories.get(0), "Everything", GregorianCalendar(2018, 3-1, 16, 13, 50),LatLng(49.269, 16.447), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 563, categories.get(0), "Something...", GregorianCalendar(2018, 3-1, 25, 12, 40),LatLng(49.651, 16.569), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 85, categories.get(0), "Something...", GregorianCalendar(2018, 3-1, 28, 16, 23),LatLng(49.374, 16.786), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 420, categories.get(0), "Something...", GregorianCalendar(2018, 4-1, 2, 9, 20),LatLng(49.295, 16.366), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, 236, categories.get(0), "Something...", GregorianCalendar(2018, 4-1, 6, 12, 20),LatLng(49.418, 16.346), Currency.getInstance("CZK" ))
-
+        val date = Calendar.getInstance().time
+        transactions = mutableListOf(
+                Transaction(TransactionType.EXPENDITURE, 2500, categories[1], "Something...", date, LatLng(49.247, 16.685), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 1500, categories[1], "Something...", date, LatLng(49.385, 16.665), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 1800, categories[1], "Something...", date, LatLng(49.225, 16.889), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 3000, categories[1], "Something...", date, LatLng(49.213, 16.789), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 250, categories[0], "Some meet and fruits", date, LatLng(52.248, 17.685), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 80, categories[0], "Some meet and fruits", date, LatLng(60.247, 15.669), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 40, categories[0], "Bread and rolls", date, LatLng(49.247, 16.458), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 850, categories[0], "Everything", date, LatLng(49.269, 16.447), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 563, categories[0], "Something...", date, LatLng(49.651, 16.569), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 85, categories[0], "Something...", date, LatLng(49.374, 16.786), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 420, categories[0], "Something...", date, LatLng(49.295, 16.366), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 236, categories[0], "Something...", date, LatLng(49.418, 16.346), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 2500, categories[1], "Something...", date, LatLng(49.247, 16.685), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 1500, categories[1], "Something...", date, LatLng(49.385, 16.665), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 1800, categories[1], "Something...", date, LatLng(49.225, 16.889), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 3000, categories[1], "Something...", date, LatLng(49.213, 16.789), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 250, categories[0], "Some meet and fruits", date, LatLng(52.248, 17.685), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 80, categories[0], "Some meet and fruits", date, LatLng(60.247, 15.669), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 40, categories[0], "Bread and rolls", date, LatLng(49.247, 16.458), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 850, categories[0], "Everything", date, LatLng(49.269, 16.447), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 563, categories[0], "Something...", date, LatLng(49.651, 16.569), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 85, categories[0], "Something...", date, LatLng(49.374, 16.786), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 420, categories[0], "Something...", date, LatLng(49.295, 16.366), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 236, categories[0], "Something...", date, LatLng(49.418, 16.346), "CZK")
         )
+
+        val transactionsListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                dataSnapshot.children.mapNotNullTo(transactions) {
+                    val transaction = it.getValue<Transaction>(Transaction::class.java)
+                    transaction?.key = it.key
+                    transaction
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                println("loadPost:onCancelled ${databaseError.toException()}")
+            }
+        }
+        FirebaseDb.getUserReference("transactions")?.addValueEventListener(transactionsListener)
+
     }
 
     var categories : List<Category>
-    var transactions : List<Transaction>
+    var transactions : MutableList<Transaction> = mutableListOf()
 
     public fun GetCategories () : List<Category>
     {
@@ -80,15 +98,17 @@ public class StatisticsHelper {
     {
         var transactionsList  : MutableList<Transaction>  = mutableListOf<Transaction>()
 
-        val transactionsAll = transactions;
+        val transactionsAll = transactions
         val transactionsListIterator = transactionsAll.iterator()
         while (transactionsListIterator.hasNext()) {
             val transaction = transactionsListIterator.next()
-
             val date = CalculateStartDate(weeks, endDate, 0)
-            if (transaction.category.id == category.id && transaction.datetime.time >= date.time && transaction.datetime.time < endDate.time)
+
+
+            if (transaction.category.id == category.id && transaction.datetime.after(date.time) && transaction.datetime.before(endDate.time))
             {
-                if (hour == null || transaction.datetime.get(Calendar.HOUR_OF_DAY) == hour)
+                //todo deprecated
+                if (hour == null || transaction.datetime.hours == hour)
                 {
                     transactionsList.add(transaction)
                 }
@@ -124,19 +144,12 @@ public class StatisticsHelper {
         return date;
     }
 
-    public fun GetColors () : List<Int>
+    fun getColors () : List<Int>
     {
-        var colorList  : MutableList<Int>  = mutableListOf<Int>()
-        colorList.add(Color.BLACK)
-        colorList.add(Color.BLUE)
-        colorList.add(Color.GREEN)
-        colorList.add(Color.RED)
-        colorList.add(Color.YELLOW)
-        colorList.add(Color.CYAN)
-        colorList.add(Color.DKGRAY)
-        colorList.add(Color.MAGENTA)
-        colorList.add(Color.GRAY)
-        colorList.add(Color.LTGRAY)
-        return colorList
+        return mutableListOf<Int>(
+            Color.BLACK, Color.BLUE, Color.GREEN,
+            Color.RED, Color.YELLOW, Color.CYAN,
+            Color.DKGRAY, Color.MAGENTA, Color.GRAY,
+            Color.LTGRAY)
     }
 }

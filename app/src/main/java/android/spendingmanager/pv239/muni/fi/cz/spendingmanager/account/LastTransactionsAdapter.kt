@@ -4,6 +4,7 @@ import android.app.Activity
 import android.graphics.Color
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.Transaction
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,12 @@ class LastTransactionsAdapter(
         val context : Activity,
         var transactions : List<Transaction>
 ) : BaseAdapter() {
+
+    fun update (list : List<Transaction>) {
+        transactions = list
+        notifyDataSetChanged()
+    }
+
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val transaction = getItem(position)
 
@@ -30,9 +37,9 @@ class LastTransactionsAdapter(
         tranCatTv.text = transaction.category.categoryName
 
         val price = view.findViewById(R.id.account_transaction_item_price_tv) as TextView
-        val sign = if (transaction.price > 0) "+" else ""
-        price.text = "$sign ${transaction.price} CZK" //todo: remove czk
-        val fontColor = if(transaction.price >= 0) Color.GREEN else Color.RED
+        val sign = if (transaction.type == TransactionType.INCOME) "+" else "-"
+        price.text = "$sign ${transaction.price} CZK"
+        val fontColor = if(transaction.type == TransactionType.EXPENDITURE) Color.RED else Color.GREEN
         price.setTextColor(fontColor)
 
         val dateFormatter = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
