@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:labelFor="@+id/transaction_item_price"
+            android:labelFor="@+id/transaction_item_category"
             android:layout_marginEnd="10dp"
             android:textSize="16sp"
             android:text="@string/category"/>
@@ -53,6 +53,55 @@
             android:layout_height="wrap_content"
             android:entries="@array/supported_currencies"/>
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:gravity="center">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/transaction_item_date"
+            android:layout_marginEnd="10dp"
+            android:textSize="16sp"
+            android:text="@string/date"/>
+        <EditText
+            android:id="@+id/transaction_item_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="date"/>
+        <Button
+            android:id="@+id/transaction_item_date_btn"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="@drawable/ic_today_black_24dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/transaction_item_frequency_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/transaction_item_frequency"
+            android:layout_weight="1"
+            android:layout_marginEnd="10dp"
+            android:textSize="16sp"
+            android:text="@string/frequency"/>
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/limits_item_frequency"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -74,6 +123,39 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:inputType="text"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/transaction_item_place_name"
+            android:layout_marginEnd="10dp"
+            android:textSize="16sp"
+            android:text="@string/place"/>
+        <TextView
+            android:id="@+id/transaction_item_place_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:textSize="16sp"
+            android:text="Pizzeria, Brno"/>
+        <TextView
+            android:id="@+id/transaction_item_place_data_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+        <Button
+            android:id="@+id/transaction_item_map_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/ic_place_black_24dp"/>
     </LinearLayout>
 
     <ImageView

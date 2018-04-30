@@ -12,14 +12,10 @@ class FirebaseDb {
         val key = reference?.push()?.key
 
         reference?.child(key)?.setValue(obj)
-
-//        getReference("users")?.child(UserData.getFirebaseUser()?.uid)
-//                ?.child(path)?.setValue(obj)
     }
 
     fun <T> updateObject(path : String, key : String?, obj : T, listener: DatabaseReference.CompletionListener? = null) {
         val reference = getUserReference()?.child(path)
-
 
         reference?.child(key)?.setValue(obj, listener)
     }

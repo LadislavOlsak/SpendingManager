@@ -16,7 +16,6 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import java.util.*
 
 class StatisticsDayTimeOverview : Fragment() {
@@ -28,8 +27,8 @@ class StatisticsDayTimeOverview : Fragment() {
 
         val weeksSpiner = view.findViewById<View>(R.id.weeksSpinner) as Spinner
         val items = arrayOf("1", "2", "3", "4", "5", "6","7", "8", "9", "10", "20", "52")
-        val weeksSpinerAdapter = ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, items)
-        weeksSpiner.setAdapter(weeksSpinerAdapter)
+        val weeksSpinerAdapter = ArrayAdapter<String>(activity, android.R.layout.simple_spinner_dropdown_item, items)
+        weeksSpiner.adapter = weeksSpinerAdapter
         val spinnerPosition = weeksSpinerAdapter.getPosition("4")
         weeksSpiner.setSelection(spinnerPosition)
 
@@ -39,17 +38,17 @@ class StatisticsDayTimeOverview : Fragment() {
         categoriesList.forEachIndexed { index, category ->
             categories.add(category.categoryName)
         }
-        val categoriesAdapter = ArrayAdapter<String>(getActivity(), R.layout.statistics_date_graphs_catlist, categories)
-        categoryListView.setAdapter(categoriesAdapter)
-        categoryListView.setItemsCanFocus(false)
-        categoryListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE)
+        val categoriesAdapter = ArrayAdapter<String>(activity, R.layout.statistics_date_graphs_catlist, categories)
+        categoryListView.adapter = categoriesAdapter
+        categoryListView.itemsCanFocus = false
+        categoryListView.choiceMode = ListView.CHOICE_MODE_MULTIPLE
         categoriesList.forEachIndexed { index, category ->
             categoryListView.setItemChecked(index,true)
         }
         // Set categoryListView height (not working automatically)
-        val params = categoryListView.getLayoutParams()
+        val params = categoryListView.layoutParams
         params.height = 120 * categoriesList.count()
-        categoryListView.setLayoutParams(params)
+        categoryListView.layoutParams = params
         categoryListView.requestLayout()
 
         var btnWeekSpinner = view.findViewById<View>(R.id.btnWeeksSpinner) as Button
@@ -64,13 +63,13 @@ class StatisticsDayTimeOverview : Fragment() {
     private fun GenerateGraphs(view: View, weeksSpiner: Spinner, categoryListView : ListView)
     {
         val currentDate = GregorianCalendar.getInstance()
-        val weeksCount : Int = weeksSpiner.getSelectedItem().toString().toInt()
+        val weeksCount : Int = weeksSpiner.selectedItem.toString().toInt()
 
         val chart = view.findViewById<View>(R.id.chart) as LineChart
         chart.removeAllViews()
 
 
-        var colorsList : List<Int> = StatisticsHelper().GetColors()
+        var colorsList : List<Int> = StatisticsHelper().getColors()
 
         // Graph Data
         val dataSets : MutableList<LineDataSet> = mutableListOf<LineDataSet>()
@@ -87,14 +86,14 @@ class StatisticsDayTimeOverview : Fragment() {
 
                 val set: LineDataSet
                 set = LineDataSet(yVals, category.categoryName)
-                set.setFillAlpha(110)
+                set.fillAlpha = 110
 
-                set.setColor(colorsList.get(index % colorsList.count()))
+                set.color = colorsList.get(index % colorsList.count())
                 set.setCircleColor(colorsList.get(index % colorsList.count()))
-                set.setLineWidth(1f)
-                set.setCircleRadius(3f)
+                set.lineWidth = 1f
+                set.circleRadius = 3f
                 set.setDrawCircleHole(false)
-                set.setValueTextSize(9f)
+                set.valueTextSize = 9f
                 set.setDrawFilled(false)
 
                 dataSets.add(set)
@@ -103,11 +102,11 @@ class StatisticsDayTimeOverview : Fragment() {
 
         val lineData = LineData(dataSets.toList())
 
-        chart.setData(lineData)
-        chart.getDescription().setEnabled(false)
+        chart.data = lineData
+        chart.description.isEnabled = false
 
-        val xAxis = chart.getXAxis()
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM)
+        val xAxis = chart.xAxis
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.setDrawGridLines(false)
         xAxis.setLabelCount(24, true)
     }

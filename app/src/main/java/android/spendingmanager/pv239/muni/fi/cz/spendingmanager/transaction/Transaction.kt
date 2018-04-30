@@ -1,31 +1,35 @@
 package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction
 
-import android.os.Bundle
-import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.Category
-import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.CategoryType
 import com.google.android.gms.maps.model.LatLng
-import java.math.BigDecimal
+import com.google.firebase.database.Exclude
 import java.util.*
 
 open class Transaction {
+    @Exclude
+    var key : String? = null
     lateinit var type : TransactionType
     var price : Int = 0
     lateinit var category: Category
     lateinit var description: String
-    lateinit var datetime: GregorianCalendar
-    var position: LatLng? = null
-    lateinit var priceCurrency : Currency
+    lateinit var datetime: Date
+
+    var longitude : Double? = null
+    var latitude : Double? = null
+
+    //lateinit var priceCurrency : Currency
+    var priceCurrency : String = "CZK"
 
     constructor()
 
-    constructor(type: TransactionType, price: Int, category: Category, description: String, datetime: GregorianCalendar, position: LatLng?, priceCurrency: Currency) {
+    constructor(type: TransactionType, price: Int, category: Category, description: String, datetime: Date, position: LatLng?, priceCurrency: String) {
         this.type = type
         this.price = price
         this.category = category
         this.description = description
         this.datetime = datetime
-        this.position = position
+        this.longitude = position?.longitude
+        this.latitude = position?.latitude
         this.priceCurrency = priceCurrency
     }
 }

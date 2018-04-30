@@ -1,11 +1,13 @@
 package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.account
 
+import android.location.Location
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R.id.account_details_list_lv
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.Category
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.CategoryType
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.home.Account
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.Transaction
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionType
@@ -18,8 +20,12 @@ import kotlinx.android.synthetic.main.activity_account.*
 import java.text.SimpleDateFormat
 import java.util.*
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.home.MainActivity
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards.LoyaltyCard
 import android.widget.Toast
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 
 
 class AccountActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
@@ -27,6 +33,8 @@ class AccountActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener 
     var account : Account? = null
     var transactionFrom : Date? = null
     var transactionTo : Date? = null
+    private var lastTransactionAdapter : LastTransactionsAdapter? = null
+    private var accountDetailsAdapter : AccountDetailsAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,8 +44,8 @@ class AccountActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener 
         setTitle()
 
         initTransactionSection()
-
-        account_details_list_lv.adapter = AccountDetailsAdapter(this, getDetailsMockData())
+        accountDetailsAdapter = AccountDetailsAdapter(this, getDetailsMockData())
+        account_details_list_lv.adapter = accountDetailsAdapter
 
         account_details_col_exp_tbtn.setOnCheckedChangeListener { _, checked ->
             val visibility = if(checked) View.GONE else View.VISIBLE
@@ -54,7 +62,8 @@ class AccountActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener 
         setTransactionDateRange(now, monthAgo)
 
         account_last_filter_iv.setOnClickListener { displayTransactionDateFilterDialog() }
-        account_last_transactions_lv.adapter = LastTransactionsAdapter(this, getTransactionMockedData())
+        lastTransactionAdapter = LastTransactionsAdapter(this, getTransactionMockedData())
+        account_last_transactions_lv.adapter = lastTransactionAdapter
         account_last_transaction_col_exp_tbtn.setOnCheckedChangeListener { _, checked ->
             val visibility = if(checked) View.GONE else View.VISIBLE
             account_last_transaction_content_layout.visibility = visibility
@@ -114,14 +123,32 @@ class AccountActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener 
 
     private fun getDetailsMockData() : List<AccountDetail> {
         return listOf(
-                AccountDetail("Balance", "7000 CZK"),
-                AccountDetail("Planned Expenses", "3000 CZK"),
-                AccountDetail("Monthly Expenses", "23000 CZK"),
-                AccountDetail("Monthly Income", "33000 CZK")
+                AccountDetail("Balance", ""),
+                AccountDetail("Planned Expenses", ""),
+                AccountDetail("Monthly Expenses", ""),
+                AccountDetail("Monthly Income", "")
         )
     }
 
     private fun getTransactionMockedData() : List<Transaction> {
+
+        val transactionsListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val transactions = mutableListOf<Transaction>()
+                dataSnapshot.children.mapNotNullTo(transactions) {
+                    val transaction = it.getValue<Transaction>(Transaction::class.java)
+                    transaction?.key = it.key
+                    transaction
+                }
+                lastTransactionAdapter?.update(transactions.reversed())
+                updateAccountDetails()
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                println("loadPost:onCancelled ${databaseError.toException()}")
+            }
+        }
+        FirebaseDb.getUserReference("transactions")?.addValueEventListener(transactionsListener)
+
 
         val categories = listOf(
                 Category("food", getString(R.string.food_drinks), CategoryType.DEFAULT),
@@ -130,14 +157,53 @@ class AccountActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener 
                 Category("others",getString(R.string.others), CategoryType.DEFAULT),
                 Category("shopping",getString(R.string.shopping), CategoryType.DEFAULT)
         )
+        val calendar = Calendar.getInstance()
 
         return listOf(
-                Transaction(TransactionType.EXPENDITURE, -250, categories.get(0), "Some meet and fruits", GregorianCalendar(2018, 3, 12, 12, 34) , LatLng(49.3, 16.6), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, -80, categories.get(1), "Some meet and fruits", GregorianCalendar(2018, 3, 13, 11, 21) ,LatLng(49.3, 16.6), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, -40, categories.get(2), "Bread and rolls", GregorianCalendar(2018, 3, 13, 11, 22) ,LatLng(49.3, 16.6) , Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, -850, categories.get(3), "Everything", GregorianCalendar(2018, 3, 16, 13, 50) ,LatLng(49.3, 16.6), Currency.getInstance("CZK" )),
-                Transaction(TransactionType.EXPENDITURE, -563, categories.get(4), "Something...", GregorianCalendar(2018, 3, 25, 12, 40) ,LatLng(49.3, 16.67), Currency.getInstance("CZK" ))
+                Transaction(TransactionType.EXPENDITURE, -250, categories[0], "Some meet and fruits",
+                        calendar.time,
+                        //GregorianCalendar(2018, 3, 12, 12, 34) ,
+                        null, "CZK"),
+                Transaction(TransactionType.EXPENDITURE, -80, categories[1], "Some meet and fruits",
+                        calendar.time,
+                        //GregorianCalendar(2018, 3, 13, 11, 21) ,
+                        null, "CZK"),
+                Transaction(TransactionType.EXPENDITURE, -40, categories[2], "Bread and rolls",
+                        calendar.time,
+                        //GregorianCalendar(2018, 3, 13, 11, 22) ,
+                        null, "CZK"),
+                Transaction(TransactionType.EXPENDITURE, -850, categories[3], "Everything",
+                        calendar.time,
+                        //GregorianCalendar(2018, 3, 16, 13, 50) ,
+                        null, "CZK"),
+                Transaction(TransactionType.EXPENDITURE, -563, categories[4], "Something...",
+                        calendar.time,
+                        //GregorianCalendar(2018, 3, 25, 12, 40) ,
+                        null, "CZK")
           )
 
+    }
+
+    private fun updateAccountDetails() {
+        val plannedMonthExpenses = 0
+        var totalBalance = 0
+        var monthExpenses = 0
+        var monthIncome = 0
+        lastTransactionAdapter?.transactions?.stream()?.forEach { x ->
+            if(x.type == TransactionType.EXPENDITURE) {
+                totalBalance -= x.price
+                monthExpenses += x.price
+            } else if (x.type == TransactionType.INCOME) {
+                totalBalance += x.price
+                monthIncome += x.price
+            }
+        }
+        val currencySuffix = " CZK"
+
+        accountDetailsAdapter?.details?.get(0)?.value = totalBalance.toString() + currencySuffix
+        accountDetailsAdapter?.details?.get(1)?.value = plannedMonthExpenses.toString() + currencySuffix
+        accountDetailsAdapter?.details?.get(2)?.value = monthExpenses.toString() + currencySuffix
+        accountDetailsAdapter?.details?.get(3)?.value = monthIncome.toString() + currencySuffix
+        accountDetailsAdapter?.notifyDataSetChanged()
     }
 }

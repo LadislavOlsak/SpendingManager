@@ -1,13 +1,8 @@
 package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction
 
-import android.app.Activity
-import android.content.Context
 import android.support.design.widget.TabLayout
 import android.support.v7.app.AppCompatActivity
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,29 +10,38 @@ import android.view.ViewGroup
 
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import kotlinx.android.synthetic.main.activity_transaction.*
-import java.math.BigDecimal
 import java.util.*
-import kotlin.collections.ArrayList
-import android.content.Context.LOCATION_SERVICE
-import android.location.LocationManager
-import android.location.LocationListener
-import android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Location
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.Category
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.CategoryType
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.Position
 import android.support.design.widget.FloatingActionButton
-import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.AppCompatSpinner
 import android.widget.*
+import java.text.SimpleDateFormat
+import android.content.Intent
+import android.os.Parcelable
+import android.provider.Settings
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.location.PoiPlace
+import android.support.v4.app.*
+import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.model.LatLng
-
+import com.google.gson.Gson
 
 
 class TransactionActivity : AppCompatActivity() {
 
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
+    private val MY_PERMISSION_ACCESS_COARSE_LOCATION = 11
+    private val LOCATION_ACTIVITY_REQUEST = 13
+
+    companion object {
+        var isLocationGranted = false
+        var location : LatLng? = null
+        var poiPlace : PoiPlace? = null
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +54,65 @@ class TransactionActivity : AppCompatActivity() {
 
         container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
         tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
+
+        checkLocationPermission()
+    }
+
+    private fun checkLocationPermission() {
+        val result = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION )
+        if ( result != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions(this, Array<String>(1) {  android.Manifest.permission.ACCESS_FINE_LOCATION  },
+                    MY_PERMISSION_ACCESS_COARSE_LOCATION )
+        } else if (result == PackageManager.PERMISSION_GRANTED) {
+            isLocationGranted = true
+            Position.getPosition(this, this::setPosition)
+            turnOnGps()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if(requestCode == MY_PERMISSION_ACCESS_COARSE_LOCATION) {
+            TransactionActivity.isLocationGranted = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
+            if(isLocationGranted) {
+                turnOnGps()
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(data != null) {
+            //https://stackoverflow.com/questions/5104269/using-startactivityforresult-how-to-get-requestcode-in-child-activity
+            val reqCode : Int = data.getIntExtra("requestCode", 0)
+            if(reqCode == LOCATION_ACTIVITY_REQUEST) {
+                val place = Gson().fromJson(data.getStringExtra("place"), PoiPlace::class.java)
+                poiPlace = place
+                setPoiPlaceInFragment(place)
+            }
+        }
+    }
+
+    private fun setPoiPlaceInFragment(place : PoiPlace) {
+        //TODO not only first
+        val currLayout = container.getChildAt(container.currentItem)
+        if(currLayout != null) {
+            val placeNameTv = currLayout.findViewById(R.id.transaction_item_place_name) as TextView
+            placeNameTv.text = place.name
+            val placeDataTv = currLayout.findViewById(R.id.transaction_item_place_data_tv) as TextView
+            placeDataTv.text = Gson().toJson(place)
+        }
+
+//        currFragment.set
+//        val selectedFragment = mSectionsPagerAdapter?.fragments?.get(0)
+//        selectedFragment?.setPoiPlace(place)
+    }
+
+    private fun turnOnGps() {
+        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+        startActivity(intent)
+    }
+
+    private fun setPosition(loc : LatLng?) {
+        //Position.getPosition(this, this::setPosition)
     }
 
     /**
@@ -58,14 +121,18 @@ class TransactionActivity : AppCompatActivity() {
      */
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
+        //var fragments = mutableListOf<PlaceholderFragment>()
+
         override fun getItem(position: Int): Fragment {
             var fragment = PlaceholderFragment.newInstance(position + 1)
             fragment.fragmentPosition = position
+            //fragments.add(fragment)
+
             return fragment
         }
 
         override fun getCount(): Int {
-            return 3
+            return 2
         }
     }
 
@@ -74,17 +141,22 @@ class TransactionActivity : AppCompatActivity() {
         var fragmentPosition : Int = -1
         private var transactionItems : List<Transaction> = mutableListOf()
         private var adapter : TransactionItemsAdapter? = null
+        private var currView : View? = null
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                                   savedInstanceState: Bundle?): View? {
-            val rootView = inflater.inflate(R.layout.fragment_transaction, container, false)
+            super.onCreateView(inflater, container, savedInstanceState)
 
-            val list = rootView.findViewById<View>(R.id.transaction_items_lv) as ListView
-            adapter = TransactionItemsAdapter(this, getData())
+            val rootView = inflater.inflate(R.layout.fragment_transaction, container, false)
+            if(this.currView == null) {
+                this.currView = rootView
+            }
+            val list = rootView?.findViewById<View>(R.id.transaction_items_lv) as ListView
+            adapter = TransactionItemsAdapter(this@PlaceholderFragment, getData())
             list.adapter = adapter
 
-            val addTransactionItemBtn = rootView.findViewById<View>(R.id.transaction_add_new_field_btn) as Button
-            addTransactionItemBtn.setOnClickListener { addNewTransactionItem() }
+//            val addTransactionItemBtn = rootView.findViewById<View>(R.id.transaction_add_new_field_btn) as Button
+//            addTransactionItemBtn.setOnClickListener { addNewTransactionItem() }
 
             val transactionFab = rootView.findViewById<View>(R.id.transaction_fab) as FloatingActionButton
             transactionFab.setOnClickListener { save(rootView, fragmentPosition) }
@@ -94,13 +166,10 @@ class TransactionActivity : AppCompatActivity() {
         }
 
         private fun getData() : List<Transaction> {
-            transactionItems += Transaction()
+            if(transactionItems.isEmpty()) {
+                transactionItems += Transaction()
+            }
             return transactionItems
-        }
-
-        private fun addNewTransactionItem() {
-            transactionItems += Transaction()
-            adapter?.updateData(transactionItems)
         }
 
         companion object {
@@ -116,76 +185,38 @@ class TransactionActivity : AppCompatActivity() {
             }
         }
 
-        private fun save(rootView: View, fragmentPosition: Int) {
+        private fun save(rootView : View, fragmentPosition: Int) {
 
-            var type : TransactionType
-            var price : Int = 0
-            var category: Category = Category()
-            var description: String = ""
-            var datetime: GregorianCalendar
-            var position: LatLng? = null
-            var priceCurrency : Currency = Currency.getInstance("CZK" )
-            var gps : LatLng? = null
-
-            // Set category
-            if (fragmentPosition == 0)
-            {
-                type = TransactionType.TRANSFER
-            }
-            else if (fragmentPosition == 1)
-            {
-                type = TransactionType.EXPENDITURE
-            }
-            else //(fragmentPosition == 2)
-            {
-                type = TransactionType.INCOME
+            val placeDataTv = rootView.findViewById(R.id.transaction_item_place_data_tv) as TextView
+            var place : PoiPlace? = null
+            if(!placeDataTv.text.isNullOrEmpty()) {
+                place = Gson().fromJson(placeDataTv.text.toString(), PoiPlace::class.java)
             }
 
-            // Set GPS
-            val MY_PERMISSION_ACCESS_COARSE_LOCATION = 11
-            val locationManager = getActivity()?.getSystemService(LOCATION_SERVICE) as LocationManager
-            if (locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-                var listener = object : LocationListener {
-                    override fun onLocationChanged(location: Location) {
-                        gps = LatLng(location.getLatitude(), location.getLongitude())
-                    }
-                    override fun onStatusChanged(s: String, i: Int, bundle: Bundle) {}
-                    override fun onProviderEnabled(s: String) {}
-                    override fun onProviderDisabled(s: String) {}
+            if(TransactionActivity.isLocationGranted) {
+                location = if(place != null) {
+                    LatLng(place.latitude, place.longitude)
+                } else {
+                    Position.location
                 }
-                // Tady bude asi v reálu problém
-                if ( ContextCompat.checkSelfPermission( getContext() as Context, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
-                    ActivityCompat.requestPermissions( getActivity() as Activity, Array<String>(1) {  android.Manifest.permission.ACCESS_COARSE_LOCATION  },
-                            MY_PERMISSION_ACCESS_COARSE_LOCATION );
-                }
-                // vyhazuje výjimku
-                // locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10.0f, listener);
             }
 
-            // Set time
-            datetime =  GregorianCalendar.getInstance() as GregorianCalendar
+            val categorySpinner = rootView.findViewById(R.id.transaction_item_category) as AppCompatSpinner
+            val noteEt = rootView.findViewById(R.id.transaction_item_note) as EditText
+            val priceEt = rootView.findViewById(R.id.transaction_item_price) as EditText
+            val dateEt = rootView.findViewById(R.id.transaction_item_date) as EditText
 
-            // Set user items
-            val transactionsView = rootView.findViewById<View>(R.id.transaction_items_lv) as ListView
-            val transactionsCount = transactionsView.getCount()
-            for (i in 0..(transactionsCount - 1)) {
+            val selectedDate: Date = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateEt.text.toString())
+            val type : TransactionType = if(fragmentPosition == 0) TransactionType.EXPENDITURE else TransactionType.INCOME
+            val price = priceEt.text.toString().toInt()
+            val description = noteEt.text.toString()
+            val category = Category( categorySpinner.selectedItem.toString(), categorySpinner.selectedItem.toString(), CategoryType.DEFAULT)
+            val newTransaction = Transaction(type, price, category, description, selectedDate, location, "CZK")
 
-                // Nevrací View, ze kterého by šlo načíst hodnoty, ale přímo Transaction (která je ale prázdná)
-                //val transactionItem = transactionsView.getItemAtPosition(i) as View
-                //val priceEdit = transactionItem?.findViewById<View>(R.id.transaction_item_price) as EditText
+            FirebaseDb().createObject("transactions", newTransaction)
+            Toast.makeText(activity, "Transaction created!", Toast.LENGTH_SHORT).show()
 
-                price = 500
-                category = Category()
-                description = "Mounthly rent"
-                priceCurrency = Currency.getInstance("CZK" )
-            }
-
-
-            val newTransaction = Transaction(type, price, category, description, datetime, gps, priceCurrency)
-            //FirebaseDb().createObject("transactions", newTransaction)
-            //finish()
-
-            Toast.makeText(getActivity(), "FAB Clicked!", Toast.LENGTH_LONG).show()
+            activity?.finish()
         }
     }
 }

@@ -10,6 +10,11 @@ class StatisticsPagerAdapter(fragmentManager: FragmentManager) : FragmentStatePa
     var mNumOfTabs: Int = 0
     lateinit var transactions: List<Transaction>
 
+    fun update(list : List<Transaction>) {
+        transactions = list
+        notifyDataSetChanged()
+    }
+
     constructor(fm: FragmentManager, NumOfTabs: Int, Transactions: List<Transaction>) : this(fm) {
         this.mNumOfTabs = NumOfTabs
         this.transactions = Transactions

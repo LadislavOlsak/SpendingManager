@@ -9,7 +9,7 @@ class Category {
     lateinit var categoryName : String
     lateinit var type : CategoryType
 
-    lateinit var dbKey : String
+    var key : String? = null
 
     constructor()
 

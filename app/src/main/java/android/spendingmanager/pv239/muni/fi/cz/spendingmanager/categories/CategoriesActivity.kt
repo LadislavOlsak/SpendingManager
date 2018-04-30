@@ -32,7 +32,7 @@ class CategoriesActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (postSnapshot in snapshot.children) {
                     val category = postSnapshot.getValue<Category>(Category::class.java)
-                    category?.dbKey = postSnapshot.key
+                    category?.key = postSnapshot.key
                     if (category != null && category.id != "")
                     {
                         allCategories.add(category)
@@ -95,11 +95,10 @@ class CategoriesActivity : AppCompatActivity() {
     override fun onContextItemSelected(item: MenuItem): Boolean {
         if (item.getTitle() === "Delete") {
             //Code To Handle deletion
-            val menuInfo: AdapterView.AdapterContextMenuInfo
-            menuInfo = item.menuInfo as AdapterView.AdapterContextMenuInfo
+            val menuInfo: AdapterView.AdapterContextMenuInfo = item.menuInfo as AdapterView.AdapterContextMenuInfo
             val index = menuInfo.position
             var category = allCategories.get(index)
-            FirebaseDb.getUserReference("categories")?.child(category.dbKey)?.removeValue()
+            FirebaseDb.getUserReference("categories")?.child(category.key)?.removeValue()
             //FirebaseDb().deleteObject("categories", category.id)
             finish()
         } else {
