@@ -62,7 +62,8 @@ class AccountActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener 
         setTransactionDateRange(now, monthAgo)
 
         account_last_filter_iv.setOnClickListener { displayTransactionDateFilterDialog() }
-        lastTransactionAdapter = LastTransactionsAdapter(this, getTransactionMockedData())
+        lastTransactionAdapter = LastTransactionsAdapter(this, mutableListOf())
+        getTransactionMockedData()
         account_last_transactions_lv.adapter = lastTransactionAdapter
         account_last_transaction_col_exp_tbtn.setOnCheckedChangeListener { _, checked ->
             val visibility = if(checked) View.GONE else View.VISIBLE
@@ -130,7 +131,7 @@ class AccountActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener 
         )
     }
 
-    private fun getTransactionMockedData() : List<Transaction> {
+    private fun getTransactionMockedData() {
 
         val transactionsListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -148,40 +149,6 @@ class AccountActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener 
             }
         }
         FirebaseDb.getUserReference("transactions")?.addValueEventListener(transactionsListener)
-
-
-        val categories = listOf(
-                Category("food", getString(R.string.food_drinks), CategoryType.DEFAULT),
-                Category("housing", getString(R.string.housing), CategoryType.DEFAULT),
-                Category("entertainment", getString(R.string.entertainment), CategoryType.DEFAULT),
-                Category("others",getString(R.string.others), CategoryType.DEFAULT),
-                Category("shopping",getString(R.string.shopping), CategoryType.DEFAULT)
-        )
-        val calendar = Calendar.getInstance()
-
-        return listOf(
-                Transaction(TransactionType.EXPENDITURE, -250, categories[0], "Some meet and fruits",
-                        calendar.time,
-                        //GregorianCalendar(2018, 3, 12, 12, 34) ,
-                        null, "CZK"),
-                Transaction(TransactionType.EXPENDITURE, -80, categories[1], "Some meet and fruits",
-                        calendar.time,
-                        //GregorianCalendar(2018, 3, 13, 11, 21) ,
-                        null, "CZK"),
-                Transaction(TransactionType.EXPENDITURE, -40, categories[2], "Bread and rolls",
-                        calendar.time,
-                        //GregorianCalendar(2018, 3, 13, 11, 22) ,
-                        null, "CZK"),
-                Transaction(TransactionType.EXPENDITURE, -850, categories[3], "Everything",
-                        calendar.time,
-                        //GregorianCalendar(2018, 3, 16, 13, 50) ,
-                        null, "CZK"),
-                Transaction(TransactionType.EXPENDITURE, -563, categories[4], "Something...",
-                        calendar.time,
-                        //GregorianCalendar(2018, 3, 25, 12, 40) ,
-                        null, "CZK")
-          )
-
     }
 
     private fun updateAccountDetails() {
