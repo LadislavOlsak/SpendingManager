@@ -81,7 +81,6 @@ class StatisticsLocationTransactionsAmount : Fragment(), OnMapReadyCallback,
 
         val latList : MutableList<Double> = mutableListOf<Double>()
         val lngList : MutableList<Double> = mutableListOf<Double>()
-
         expenseOnlyList.forEachIndexed { index, transaction ->
             if(transaction.latitude != null && transaction.longitude != null) {
                 val latitude = transaction.latitude as Double
