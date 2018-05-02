@@ -6,6 +6,9 @@ import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
 
 class StatisticsClusterManager(context: Context, map: GoogleMap, clusterManager: ClusterManager<StatisticsClusterItem>, getValue: Boolean)
     : DefaultClusterRenderer<StatisticsClusterItem>(context, map, clusterManager)
@@ -28,5 +31,9 @@ class StatisticsClusterManager(context: Context, map: GoogleMap, clusterManager:
 
     override fun getClusterText(bucket: Int): String {
         return value.toString()
+    }
+
+    override fun shouldRenderAsCluster(cluster: Cluster<StatisticsClusterItem>): Boolean {
+        return cluster.size > 1
     }
 }

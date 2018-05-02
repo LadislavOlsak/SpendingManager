@@ -1,15 +1,18 @@
 package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.statistics
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.Transaction
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionType
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -19,9 +22,13 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
+import com.google.maps.android.clustering.algo.Algorithm
 
-class StatisticsLocationTransactionsAmount : Fragment(), OnMapReadyCallback {
+class StatisticsLocationTransactionsAmount : Fragment(), OnMapReadyCallback,
+        ClusterManager.OnClusterClickListener<StatisticsClusterItem>,
+        ClusterManager.OnClusterItemClickListener<StatisticsClusterItem> {
 
     private var expenseOnlyList = mutableListOf<Transaction>()
     private var mapFragment : SupportMapFragment? = null
@@ -68,21 +75,20 @@ class StatisticsLocationTransactionsAmount : Fragment(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         val mClusterManager: ClusterManager<StatisticsClusterItem> = ClusterManager<StatisticsClusterItem>(activity, googleMap)
-
-        //mMap = googleMap
         mClusterManager.renderer = StatisticsClusterManager(context as Context, googleMap, mClusterManager, false)
+        mClusterManager.setOnClusterClickListener(this)
+        mClusterManager.setOnClusterItemClickListener(this)
 
-        var latList : MutableList<Double> = mutableListOf<Double>()
-        var lngList : MutableList<Double> = mutableListOf<Double>()
+        val latList : MutableList<Double> = mutableListOf<Double>()
+        val lngList : MutableList<Double> = mutableListOf<Double>()
 
         expenseOnlyList.forEachIndexed { index, transaction ->
             if(transaction.latitude != null && transaction.longitude != null) {
                 val latitude = transaction.latitude as Double
                 val longitude = transaction.longitude as Double
-                //mMap.addMarker(MarkerOptions().position(location).title(transaction.category.categoryName + ": " + transaction.amount))
                 latList.add(latitude)
                 lngList.add(longitude)
-                val offsetItem = StatisticsClusterItem(latitude, longitude, transaction.price)
+                val offsetItem = StatisticsClusterItem(transaction, latitude, longitude, transaction.price.toString() + " CZK", "", transaction.price)
                 mClusterManager.addItem(offsetItem)
             }
         }
@@ -91,5 +97,21 @@ class StatisticsLocationTransactionsAmount : Fragment(), OnMapReadyCallback {
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(center))
         googleMap.setOnCameraIdleListener(mClusterManager)
         googleMap.setOnMarkerClickListener(mClusterManager)
+        mClusterManager.cluster()
     }
+
+    override fun onClusterClick(p0: Cluster<StatisticsClusterItem>?): Boolean {
+        //todo display list of transactions
+        var message = ""
+        p0?.items?.forEach{ x -> run {
+            message += x.getItem().price.toString() + " CZK " + x.getItem().datetime.toString() + "\n"
+        }}
+        Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
+        return true
+    }
+
+    override fun onClusterItemClick(p0: StatisticsClusterItem?): Boolean {
+        return false
+    }
+
 }
