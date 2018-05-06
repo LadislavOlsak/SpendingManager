@@ -183,7 +183,6 @@ class TransactionActivity : AppCompatActivity() {
                     val categorySpinner = rootView.findViewById(R.id.transaction_item_category) as AppCompatSpinner
                     categorySpinner.adapter = ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, categories)
                 }
-
                 override fun onCancelled(databaseError: DatabaseError) {}
             })
 

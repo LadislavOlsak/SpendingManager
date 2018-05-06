@@ -9,6 +9,7 @@ import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.Defau
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.planning.TransactionFrequency
 import android.widget.ListView
+import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
