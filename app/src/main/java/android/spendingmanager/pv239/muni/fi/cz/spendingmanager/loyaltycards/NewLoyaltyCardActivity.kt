@@ -117,7 +117,7 @@ class NewLoyaltyCardActivity (
         buildLoyaltyCardFromInput(loyaltyCard)
 
         FirebaseDb().updateObject("loyaltycards/", loyaltyCard.key, loyaltyCard, (
-            DatabaseReference.CompletionListener { firebaseError, reference ->
+            DatabaseReference.CompletionListener { firebaseError, _ ->
                 if(firebaseError != null) {
                     Toast.makeText(this@NewLoyaltyCardActivity, "Data could not be saved.", Toast.LENGTH_LONG).show()
                 } else {

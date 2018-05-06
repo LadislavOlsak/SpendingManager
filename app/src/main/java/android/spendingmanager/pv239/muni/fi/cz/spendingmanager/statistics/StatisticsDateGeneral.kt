@@ -25,8 +25,8 @@ class StatisticsDateGeneral : Fragment() {
 
         val weeksSpiner = view.findViewById<View>(R.id.weeksSpinner) as Spinner
         val items = arrayOf("1", "2", "3", "4", "5", "6","7", "8", "9", "10", "20", "52")
-        val weeksSpinerAdapter = ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, items)
-        weeksSpiner.setAdapter(weeksSpinerAdapter)
+        val weeksSpinerAdapter = ArrayAdapter<String>(activity, android.R.layout.simple_spinner_dropdown_item, items)
+        weeksSpiner.adapter = weeksSpinerAdapter
         val spinnerPosition = weeksSpinerAdapter.getPosition("4")
         weeksSpiner.setSelection(spinnerPosition)
 
@@ -47,12 +47,12 @@ class StatisticsDateGeneral : Fragment() {
 
         var tableDatesOverview = view.findViewById<View>(R.id.tableDatesOverview) as TableLayout
         tableDatesOverview.removeAllViews()
-        val row = TableRow(getActivity())
-        val txt1 = EditText(getActivity())
+        val row = TableRow(activity)
+        val txt1 = EditText(activity)
         txt1.setText("Category")
-        val txt2 = EditText(getActivity())
+        val txt2 = EditText(activity)
         txt2.setText("Value")
-        val txt3 = EditText(getActivity())
+        val txt3 = EditText(activity)
         txt3.setText("+/- *")
         row.addView(txt1)
         row.addView(txt2)
@@ -63,37 +63,37 @@ class StatisticsDateGeneral : Fragment() {
         var i: Int = 1
         while (categoriesListIterator.hasNext()) {
             val category = categoriesListIterator.next()
-            val row = TableRow(getActivity())
-            if (i % 2 === 0) {
+            val row = TableRow(activity)
+            if (i % 2 == 0) {
                 row.setBackgroundColor(Color.rgb(220,220,220))
             } else {
                 row.setBackgroundColor(Color.rgb(180,180,180))
             }
 
-            val txt1 = EditText(getActivity())
+            val txt1 = EditText(activity)
             txt1.setText(category.categoryName)
             row.addView(txt1)
 
-            val currentDate = GregorianCalendar.getInstance();
-            val value = StatisticsHelper().CalculateValueTransactions(category, weeksSpiner.getSelectedItem().toString().toInt(), currentDate)
-            val txt2 = EditText(getActivity())
+            val currentDate = GregorianCalendar.getInstance()
+            val value = StatisticsHelper().CalculateValueTransactions(category, weeksSpiner.selectedItem.toString().toInt(), currentDate)
+            val txt2 = EditText(activity)
             txt2.setText(value.toString())
             row.addView(txt2)
 
             // TODO: Vypočítat minulé období
-            val lastSeasonDate = StatisticsHelper().CalculateStartDate(weeksSpiner.getSelectedItem().toString().toInt(), currentDate, 1)
-            val lastSeasonValue = StatisticsHelper().CalculateValueTransactions(category, weeksSpiner.getSelectedItem().toString().toInt(), lastSeasonDate)
+            val lastSeasonDate = StatisticsHelper().CalculateStartDate(weeksSpiner.selectedItem.toString().toInt(), currentDate, 1)
+            val lastSeasonValue = StatisticsHelper().CalculateValueTransactions(category, weeksSpiner.selectedItem.toString().toInt(), lastSeasonDate)
             var ratio = 0.0
-            if (lastSeasonValue != 0)
+            if (lastSeasonValue != 0.0)
             {
                 ratio = ((value/lastSeasonValue.toDouble()) * 100)
             }
-            else if (value != 0)
+            else if (value != 0.0)
             {
                 ratio = 999.0
             }
 
-            val txt3 = EditText(getActivity())
+            val txt3 = EditText(activity)
             txt3.setText(ratio.toInt().toString() + " %")
             if (ratio > 100)
             {
@@ -110,7 +110,7 @@ class StatisticsDateGeneral : Fragment() {
         }
 
         var tableDatesNote = view.findViewById<View>(R.id.tableDatesNote) as TextView
-        tableDatesNote.setText("* Comparison to previous " + weeksSpiner.getSelectedItem().toString() + " weeks")
+        tableDatesNote.text = "* Comparison to previous " + weeksSpiner.selectedItem.toString() + " weeks"
     }
 }
 

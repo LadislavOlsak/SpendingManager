@@ -4,4 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="pie_red">#e53935</color>
+    <color name="pie_orange">#fb8c00</color>
+    <color name="pie_yellow">#fdd835</color>
+    <color name="pie_green">#7cb342</color>
 </resources>

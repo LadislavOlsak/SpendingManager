@@ -19,7 +19,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/accounts"
+            android:text="Account"
             android:textSize="20sp"
             android:layout_marginBottom="10dp"
             android:layout_marginStart="10dp"/>
@@ -33,9 +33,10 @@
             android:layout_margin="10dp"/>
     </LinearLayout>
 
-    <Button
+    <ListView
+        android:id="@+id/main_account_stats"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="test"/>
+        android:orientation="vertical" />
 
 </LinearLayout>

@@ -9,10 +9,10 @@ class StatisticsClusterItem : ClusterItem {
     private val mPosition: LatLng
     private val mTitle: String
     private val mSnippet: String
-    private val mValue: Int
+    private val mValue: Double
     private val mItem: Transaction
 
-    constructor(item: Transaction, lat: Double, lng: Double, value: Int) {
+    constructor(item: Transaction, lat: Double, lng: Double, value: Double) {
         mItem = item
         mPosition = LatLng(lat, lng)
         mTitle = ""
@@ -20,7 +20,7 @@ class StatisticsClusterItem : ClusterItem {
         mValue = value
     }
 
-    constructor(item: Transaction, lat: Double, lng: Double, title: String, snippet: String, value: Int) {
+    constructor(item: Transaction, lat: Double, lng: Double, title: String, snippet: String, value: Double) {
         mItem = item
         mPosition = LatLng(lat, lng)
         mTitle = title
@@ -40,7 +40,7 @@ class StatisticsClusterItem : ClusterItem {
         return mSnippet
     }
 
-    fun getValue(): Int {
+    fun getValue(): Double {
         return mValue
     }
 

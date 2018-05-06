@@ -27,9 +27,4 @@
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:text="@string/save"/>
 
-    <!--
-        android:contentDescription="@string/save_changes"
-        android:src="@drawable/ic_save_black_24dp"
-        -->
-
 </LinearLayout>

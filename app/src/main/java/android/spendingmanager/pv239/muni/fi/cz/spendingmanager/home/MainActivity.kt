@@ -51,6 +51,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             Account("My Cash Account", Currency.getInstance("CZK"), BigDecimal("1000.0"))
         )
         main_accounts_list.adapter = AccountsAdapter(this, accounts)
+
+        main_account_stats.adapter = AccountStatsAdapter(this, listOf(AccountStats("A", 1.1f),
+                AccountStats("B", 25.1f),
+                AccountStats("C", 56.3f), AccountStats("D", 99.9f)))
     }
 
     private fun startLoginIntent() {
