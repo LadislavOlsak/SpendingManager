@@ -110,10 +110,6 @@ class TransactionActivity : AppCompatActivity() {
             val placeDataTv = currLayout.findViewById(R.id.transaction_item_place_data_tv) as TextView
             placeDataTv.text = Gson().toJson(place)
         }
-
-//        currFragment.set
-//        val selectedFragment = mSectionsPagerAdapter?.fragments?.get(0)
-//        selectedFragment?.setPoiPlace(place)
     }
 
     private fun turnOnGps() {
