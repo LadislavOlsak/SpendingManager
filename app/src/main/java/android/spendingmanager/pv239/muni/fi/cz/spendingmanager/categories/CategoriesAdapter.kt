@@ -16,8 +16,13 @@ import java.util.*
 
 class CategoriesAdapter(
         private val context : Context,
-        private val categories : List<Category>
+        private var categories : List<Category>
 ) : BaseAdapter() {
+
+    fun update(list : List<Category>) {
+        categories = list
+        notifyDataSetChanged()
+    }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
 

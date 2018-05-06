@@ -71,4 +71,7 @@
     <string name="email">Email</string>
     <string name="logout">Logout</string>
     <string name="place">Place</string>
+    <string name="please_select_place">Please select place</string>
+    <string name="add_category">Add category</string>
+    <string name="add">Add</string>
 </resources>

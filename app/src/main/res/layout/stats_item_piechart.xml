@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:plainpie="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_margin="5dp">
+
+
+    <TextView
+        android:id="@+id/chart_text_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="18sp"
+        android:text="Account Balance"
+        android:layout_marginBottom="10dp"/>
+
+    <az.plainpie.PieView
+        android:id="@+id/chart_pieView"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        plainpie:inner_pie_padding="30"
+        plainpie:percentage="75"
+        plainpie:percentage_size="45"
+        plainpie:inner_text_visibility="true"/>
+
+</LinearLayout>

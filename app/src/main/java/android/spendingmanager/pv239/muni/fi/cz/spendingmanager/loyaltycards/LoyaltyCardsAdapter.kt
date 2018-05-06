@@ -91,7 +91,7 @@ class LoyaltyCardsAdapter(
         val alertDialog = AlertDialog.Builder(context)
                 .setTitle(loyaltyCard.cardName)
                 .setMessage("Do you want to delete this card?")
-                .setPositiveButton("Yes", DialogInterface.OnClickListener { dialogInterface, i ->
+                .setPositiveButton("Yes", DialogInterface.OnClickListener { _, i ->
                     run{
                         //todo delete
                         Toast.makeText(context, "Card \"" + loyaltyCard.cardName + "\" deleted.", Toast.LENGTH_SHORT).show()

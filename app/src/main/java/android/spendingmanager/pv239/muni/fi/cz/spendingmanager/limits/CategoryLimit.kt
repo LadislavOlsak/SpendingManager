@@ -1,22 +1,16 @@
 package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.limits
 
-import java.math.BigDecimal;
-import java.util.*
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.planning.TransactionFrequency
 
-class CategoryLimit {
-    lateinit var categoryName: String
-    var notificationEnabled : Boolean = false
-    var limitAmount : Int = 0
-    //lateinit var limitAmountCurrency : Currency
+class CategoryLimit(
+        var categoryName : String,
+        var limitAmount : Double,
+        var limitAmountCurrency : String,
+        var isActive : Boolean = false,
+        var frequency : TransactionFrequency
+) {
 
-    var key : String? = null
+    var key :String = ""
 
-    constructor()
-
-    constructor(categoryName: String, notificationEnabled: Boolean, limitAmount: Int) {
-        this.categoryName = categoryName
-        this.notificationEnabled = notificationEnabled
-        this.limitAmount = limitAmount
-        //this.limitAmountCurrency = limitAmountCurrency
-    }
+    constructor() : this("", 0.0, "CZK", false, TransactionFrequency.Monthly)
 }

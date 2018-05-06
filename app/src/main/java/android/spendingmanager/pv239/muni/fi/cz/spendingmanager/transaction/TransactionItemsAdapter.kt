@@ -85,8 +85,8 @@ class TransactionItemsAdapter(
         val priceEditText = view.findViewById<View>(R.id.transaction_item_price) as EditText
         priceEditText.setText(transactionItem.price.toString())
 
-        val removeTransactionItem = view.findViewById<View>(R.id.transaction_item_delete_iv) as ImageView
-        removeTransactionItem.visibility = View.GONE
+//        val removeTransactionItem = view.findViewById<View>(R.id.transaction_item_delete_iv) as ImageView
+//        removeTransactionItem.visibility = View.GONE
         //removeTransactionItem.setOnClickListener { removeItem(position) }
 
         dateEt = view.findViewById(R.id.transaction_item_date) as EditText

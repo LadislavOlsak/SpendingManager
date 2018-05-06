@@ -5,9 +5,9 @@ import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 
 class Category {
 
-    lateinit var id: String // eg. food, housing,...
-    lateinit var categoryName : String
-    lateinit var type : CategoryType
+    var id: String = ""// eg. food, housing,...
+    var categoryName : String = ""
+    var type = CategoryType.DEFAULT
 
     var key : String? = null
 

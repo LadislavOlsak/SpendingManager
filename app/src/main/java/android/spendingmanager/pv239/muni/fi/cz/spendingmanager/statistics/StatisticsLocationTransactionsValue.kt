@@ -19,9 +19,10 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 
-class StatisticsLocationTransactionsValue : Fragment(), OnMapReadyCallback {
+class StatisticsLocationTransactionsValue : Fragment(), OnMapReadyCallback, ClusterManager.OnClusterClickListener<StatisticsClusterItem> {
 
     private var expenseOnlyList = mutableListOf<Transaction>()
     private var mapFragment : SupportMapFragment? = null
@@ -77,10 +78,11 @@ class StatisticsLocationTransactionsValue : Fragment(), OnMapReadyCallback {
             if(transaction.latitude != null && transaction.longitude != null) {
                 val latitude = transaction.latitude as Double
                 val longitude = transaction.longitude as Double
-                //mMap.addMarker(MarkerOptions().position(location).title(transaction.category.categoryName + ": " + transaction.amount))
                 latList.add(latitude)
                 lngList.add(longitude)
-                val offsetItem = StatisticsClusterItem(latitude, longitude, transaction.category.categoryName + ": " + transaction.price, "",  transaction.price)
+                val offsetItem = StatisticsClusterItem(transaction, latitude, longitude,
+                        transaction.category.categoryName + ": " + transaction.price + " CZK",
+                        "",  transaction.price)
                 mClusterManager.addItem(offsetItem)
             }
         }
@@ -89,6 +91,12 @@ class StatisticsLocationTransactionsValue : Fragment(), OnMapReadyCallback {
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(center))
         googleMap.setOnCameraIdleListener(mClusterManager)
         googleMap.setOnMarkerClickListener(mClusterManager)
+        mClusterManager.cluster()
+    }
+
+    override fun onClusterClick(p0: Cluster<StatisticsClusterItem>?): Boolean {
+
+        return true
     }
 
 }

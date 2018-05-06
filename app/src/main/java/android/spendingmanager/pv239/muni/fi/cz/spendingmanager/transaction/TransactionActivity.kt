@@ -1,5 +1,6 @@
 package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction
 
+import android.app.Activity
 import android.support.design.widget.TabLayout
 import android.support.v7.app.AppCompatActivity
 
@@ -24,11 +25,20 @@ import java.text.SimpleDateFormat
 import android.content.Intent
 import android.os.Parcelable
 import android.provider.Settings
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.DefaultCategories
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.DatePickerDialog
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.location.LocationActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.location.PoiPlace
 import android.support.v4.app.*
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 
 class TransactionActivity : AppCompatActivity() {
@@ -136,40 +146,55 @@ class TransactionActivity : AppCompatActivity() {
         }
     }
 
-    class PlaceholderFragment : Fragment() {
+    class PlaceholderFragment : Fragment(), android.app.DatePickerDialog.OnDateSetListener {
+
+        private val LOCATION_ACTIVITY_REQUEST = 13
+        private var dateEt : EditText? = null
+
+        override fun onDateSet(p0: DatePicker?, p1: Int, p2: Int, p3: Int) {
+
+            val c = Calendar.getInstance()
+            c.set(p1, p2, p3)
+            dateEt?.setText(SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(c.time))
+        }
 
         var fragmentPosition : Int = -1
-        private var transactionItems : List<Transaction> = mutableListOf()
-        private var adapter : TransactionItemsAdapter? = null
-        private var currView : View? = null
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                                   savedInstanceState: Bundle?): View? {
             super.onCreateView(inflater, container, savedInstanceState)
 
             val rootView = inflater.inflate(R.layout.fragment_transaction, container, false)
-            if(this.currView == null) {
-                this.currView = rootView
-            }
-            val list = rootView?.findViewById<View>(R.id.transaction_items_lv) as ListView
-            adapter = TransactionItemsAdapter(this@PlaceholderFragment, getData())
-            list.adapter = adapter
 
-//            val addTransactionItemBtn = rootView.findViewById<View>(R.id.transaction_add_new_field_btn) as Button
-//            addTransactionItemBtn.setOnClickListener { addNewTransactionItem() }
+            dateEt = rootView?.findViewById(R.id.transaction_item_date) as EditText
+            dateEt?.setText(SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Calendar.getInstance().time))
 
             val transactionFab = rootView.findViewById<View>(R.id.transaction_fab) as FloatingActionButton
             transactionFab.setOnClickListener { save(rootView, fragmentPosition) }
 
-            //rootView.section_label.text = getString(R.string.section_format, arguments.getInt(ARG_SECTION_NUMBER))
-            return rootView
-        }
+            FirebaseDb.getUserReference("categories")?.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val categories = DefaultCategories.getDefaultCategories().map { x -> x.categoryName }.toMutableList()
+                    snapshot.children.forEach { postSnapshot ->
+                        val category = postSnapshot.getValue<Category>(Category::class.java) as Category
+                        category.key = postSnapshot.key
+                        categories.add(category.categoryName)
+                    }
+                    val categorySpinner = rootView.findViewById(R.id.transaction_item_category) as AppCompatSpinner
+                    categorySpinner.adapter = ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, categories)
+                }
+                override fun onCancelled(databaseError: DatabaseError) {}
+            })
 
-        private fun getData() : List<Transaction> {
-            if(transactionItems.isEmpty()) {
-                transactionItems += Transaction()
+            val dateBtn = rootView.findViewById(R.id.transaction_item_date_btn) as Button
+            dateBtn.setOnClickListener { DatePickerDialog(activity as Activity).create(this).show() }
+
+            val mapBtn = rootView.findViewById(R.id.transaction_item_map_btn) as Button
+            mapBtn.setOnClickListener {
+                activity?.startActivityForResult(Intent(activity, LocationActivity::class.java), LOCATION_ACTIVITY_REQUEST)
             }
-            return transactionItems
+
+            return rootView
         }
 
         companion object {
@@ -208,9 +233,15 @@ class TransactionActivity : AppCompatActivity() {
 
             val selectedDate: Date = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateEt.text.toString())
             val type : TransactionType = if(fragmentPosition == 0) TransactionType.EXPENDITURE else TransactionType.INCOME
-            val price = priceEt.text.toString().toInt()
+            val price = priceEt.text.toString().toDoubleOrNull()
             val description = noteEt.text.toString()
             val category = Category( categorySpinner.selectedItem.toString(), categorySpinner.selectedItem.toString(), CategoryType.DEFAULT)
+
+            if(price == null || price == 0.0) {
+                Toast.makeText(activity, "Price cannot be empty or zero.", Toast.LENGTH_LONG).show()
+                return
+            }
+
             val newTransaction = Transaction(type, price, category, description, selectedDate, location, "CZK")
 
             FirebaseDb().createObject("transactions", newTransaction)
