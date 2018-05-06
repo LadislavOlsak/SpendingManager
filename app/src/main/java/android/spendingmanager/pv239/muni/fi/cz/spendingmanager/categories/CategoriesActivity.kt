@@ -31,7 +31,7 @@ class CategoriesActivity : AppCompatActivity() {
 
         val context = this
 
-        FirebaseDb.getUserReference("categories")?.addValueEventListener(object : ValueEventListener {
+        AllCategories.getCustomCategories(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 allCategories.clear()
                 for (postSnapshot in snapshot.children) {
@@ -47,7 +47,6 @@ class CategoriesActivity : AppCompatActivity() {
 
             override fun onCancelled(databaseError: DatabaseError) {}
         })
-
 
         val customListView = findViewById<View>(R.id.categories_custom_list) as ListView
         adapter = CategoriesAdapter(context, allCategories)
@@ -79,7 +78,6 @@ class CategoriesActivity : AppCompatActivity() {
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         if (item.title === "Delete") {
-            //Code To Handle deletion
             val menuInfo: AdapterView.AdapterContextMenuInfo = item.menuInfo as AdapterView.AdapterContextMenuInfo
             val index = menuInfo.position
             var category = allCategories.get(index)

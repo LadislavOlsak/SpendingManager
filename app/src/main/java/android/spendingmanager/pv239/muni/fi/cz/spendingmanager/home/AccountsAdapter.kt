@@ -34,11 +34,11 @@ class AccountsAdapter(
         val accountAmountTv = view.findViewById(R.id.main_account_amount_and_curr) as TextView
         accountAmountTv.text = "${account.amount.toString()} ${account.currency.currencyCode}"
 
-        val accountWrapper = view.findViewById(R.id.main_account_wrapper) as LinearLayout
+        //val accountWrapper = view.findViewById(R.id.main_account_wrapper) as LinearLayout
 
         val accountIntent = Intent(context, AccountActivity::class.java)
         accountIntent.putExtra("account", Gson().toJson(account))
-        accountWrapper.setOnClickListener { context.startActivity(accountIntent) }
+        //accountWrapper.setOnClickListener { context.startActivity(accountIntent) }
 
         return view
     }
