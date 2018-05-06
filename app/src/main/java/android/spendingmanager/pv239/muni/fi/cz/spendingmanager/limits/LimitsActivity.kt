@@ -9,6 +9,7 @@ import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.Defau
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.planning.TransactionFrequency
 import android.widget.ListView
+import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -47,7 +48,6 @@ class LimitsActivity : AppCompatActivity() {
         adapter = CategoryLimitsAdapter(this@LimitsActivity, emptyList())
         limitsList.adapter = adapter
 
-        limits_save_changed_btn.setOnClickListener { saveChanges() }
     }
 
     private fun loadLimits() {
@@ -78,5 +78,17 @@ class LimitsActivity : AppCompatActivity() {
         }
 
         Toast.makeText(this, "TODO: Changes are saved!", Toast.LENGTH_LONG).show()
+    }
+
+    fun getViewByPosition(position: Int, listView: ListView): View {
+        val firstListItemPosition = listView.firstVisiblePosition
+        val lastListItemPosition = firstListItemPosition + listView.childCount - 1
+
+        if (position < firstListItemPosition || position > lastListItemPosition) {
+            return listView.adapter.getView(position, listView.getChildAt(position), listView)
+        } else {
+            val childIndex = position - firstListItemPosition
+            return listView.getChildAt(childIndex)
+        }
     }
 }
