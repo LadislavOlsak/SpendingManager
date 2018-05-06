@@ -9,7 +9,7 @@ open class Transaction {
     @Exclude
     var key : String? = null
     lateinit var type : TransactionType
-    var price : Int = 0
+    var price : Double = Double.NaN
     lateinit var category: Category
     lateinit var description: String
     lateinit var datetime: Date
@@ -22,7 +22,7 @@ open class Transaction {
 
     constructor()
 
-    constructor(type: TransactionType, price: Int, category: Category, description: String, datetime: Date, position: LatLng?, priceCurrency: String) {
+    constructor(type: TransactionType, price: Double, category: Category, description: String, datetime: Date, position: LatLng?, priceCurrency: String) {
         this.type = type
         this.price = price
         this.category = category

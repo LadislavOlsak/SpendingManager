@@ -7,25 +7,25 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
+import kotlin.math.roundToInt
 
 
 class StatisticsClusterManager(context: Context, map: GoogleMap, clusterManager: ClusterManager<StatisticsClusterItem>, getValue: Boolean)
     : DefaultClusterRenderer<StatisticsClusterItem>(context, map, clusterManager)
 {
     private val getValue = getValue
-    private var value : Int = 0
+    private var value : Double = 0.0
 
     override fun getBucket(cluster: Cluster<StatisticsClusterItem>): Int {
         if (getValue)
         {
-            value = cluster.items.sumBy { item -> item.getValue() }
-            return value
+            value = cluster.items.sumByDouble { item -> item.getValue() }
+            return value.roundToInt()
         }
         else
         {
-            value = cluster.size
-            return value
+            value = cluster.size.toDouble()
+            return value.roundToInt()
         }
     }
 

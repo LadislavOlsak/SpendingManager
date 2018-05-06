@@ -1,4 +1,4 @@
-<LinearLayout
+<RelativeLayout
      xmlns:android="http://schemas.android.com/apk/res/android"
      xmlns:app="http://schemas.android.com/apk/res-auto"
      xmlns:tools="http://schemas.android.com/tools"
@@ -8,15 +8,6 @@
      tools:context=".transaction.TransactionActivity$PlaceholderFragment"
      android:orientation="vertical">
 
-    <!--
-    <Button
-        android:id="@+id/transaction_add_new_field_btn"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:text="@string/add_new_field"/>
-
-    -->
     <View
         android:id="@+id/divider2"
         android:layout_width="match_parent"
@@ -24,22 +15,17 @@
         android:layout_marginBottom="5dp"
         android:background="@color/colorAccent" />
 
-    <ListView
-        android:id="@+id/transaction_items_lv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:divider="@null"
-        android:dividerHeight="5dp"/>
+    <include
+        android:id="@+id/transaction_item"
+        layout="@layout/transaction_item" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/transaction_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:layout_margin="@dimen/fab_margin"
         app:fabSize="normal"
         app:srcCompat="@drawable/ic_save_black_24dp" />
-</LinearLayout>
+</RelativeLayout>

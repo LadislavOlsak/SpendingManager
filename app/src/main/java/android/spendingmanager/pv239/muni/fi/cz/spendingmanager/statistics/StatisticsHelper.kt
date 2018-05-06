@@ -29,30 +29,30 @@ public class StatisticsHelper {
 
         val date = Calendar.getInstance().time
         transactions = mutableListOf(
-                Transaction(TransactionType.EXPENDITURE, 2500, categories[1], "Something...", date, LatLng(49.247, 16.685), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 1500, categories[1], "Something...", date, LatLng(49.385, 16.665), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 1800, categories[1], "Something...", date, LatLng(49.225, 16.889), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 3000, categories[1], "Something...", date, LatLng(49.213, 16.789), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 250, categories[0], "Some meet and fruits", date, LatLng(52.248, 17.685), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 80, categories[0], "Some meet and fruits", date, LatLng(60.247, 15.669), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 40, categories[0], "Bread and rolls", date, LatLng(49.247, 16.458), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 850, categories[0], "Everything", date, LatLng(49.269, 16.447), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 563, categories[0], "Something...", date, LatLng(49.651, 16.569), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 85, categories[0], "Something...", date, LatLng(49.374, 16.786), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 420, categories[0], "Something...", date, LatLng(49.295, 16.366), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 236, categories[0], "Something...", date, LatLng(49.418, 16.346), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 2500, categories[1], "Something...", date, LatLng(49.247, 16.685), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 1500, categories[1], "Something...", date, LatLng(49.385, 16.665), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 1800, categories[1], "Something...", date, LatLng(49.225, 16.889), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 3000, categories[1], "Something...", date, LatLng(49.213, 16.789), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 250, categories[0], "Some meet and fruits", date, LatLng(52.248, 17.685), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 80, categories[0], "Some meet and fruits", date, LatLng(60.247, 15.669), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 40, categories[0], "Bread and rolls", date, LatLng(49.247, 16.458), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 850, categories[0], "Everything", date, LatLng(49.269, 16.447), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 563, categories[0], "Something...", date, LatLng(49.651, 16.569), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 85, categories[0], "Something...", date, LatLng(49.374, 16.786), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 420, categories[0], "Something...", date, LatLng(49.295, 16.366), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 236, categories[0], "Something...", date, LatLng(49.418, 16.346), "CZK")
+                Transaction(TransactionType.EXPENDITURE, 2500.0, categories[1], "Something...", date, LatLng(49.247, 16.685), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 1500.0, categories[1], "Something...", date, LatLng(49.385, 16.665), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 1800.0, categories[1], "Something...", date, LatLng(49.225, 16.889), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 3000.0, categories[1], "Something...", date, LatLng(49.213, 16.789), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 250.0, categories[0], "Some meet and fruits", date, LatLng(52.248, 17.685), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 80.0, categories[0], "Some meet and fruits", date, LatLng(60.247, 15.669), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 40.0, categories[0], "Bread and rolls", date, LatLng(49.247, 16.458), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 850.0, categories[0], "Everything", date, LatLng(49.269, 16.447), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 563.0, categories[0], "Something...", date, LatLng(49.651, 16.569), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 85.0, categories[0], "Something...", date, LatLng(49.374, 16.786), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 420.0, categories[0], "Something...", date, LatLng(49.295, 16.366), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 236.0, categories[0], "Something...", date, LatLng(49.418, 16.346), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 2500.0, categories[1], "Something...", date, LatLng(49.247, 16.685), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 1500.0, categories[1], "Something...", date, LatLng(49.385, 16.665), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 1800.0, categories[1], "Something...", date, LatLng(49.225, 16.889), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 3000.0, categories[1], "Something...", date, LatLng(49.213, 16.789), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 250.0, categories[0], "Some meet and fruits", date, LatLng(52.248, 17.685), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 80.0, categories[0], "Some meet and fruits", date, LatLng(60.247, 15.669), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 40.0, categories[0], "Bread and rolls", date, LatLng(49.247, 16.458), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 850.0, categories[0], "Everything", date, LatLng(49.269, 16.447), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 563.0, categories[0], "Something...", date, LatLng(49.651, 16.569), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 85.0, categories[0], "Something...", date, LatLng(49.374, 16.786), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 420.0, categories[0], "Something...", date, LatLng(49.295, 16.366), "CZK"),
+                Transaction(TransactionType.EXPENDITURE, 236.0, categories[0], "Something...", date, LatLng(49.418, 16.346), "CZK")
         )
 
         val transactionsListener = object : ValueEventListener {
@@ -117,9 +117,9 @@ public class StatisticsHelper {
         return transactionsList;
     }
 
-    public fun CalculateValueTransactions (category : Category, weeks : Int, date : Calendar) : Int
+    public fun CalculateValueTransactions (category : Category, weeks : Int, date : Calendar) : Double
     {
-        var value = 0;
+        var value = 0.0;
         val transactionsList = GetTransactions(category, weeks, date, null)
 
         val transactionsListIterator = transactionsList.iterator()
@@ -127,7 +127,7 @@ public class StatisticsHelper {
             val transaction = transactionsListIterator.next()
             value += transaction.price
         }
-        return value;
+        return value
     }
 
     public fun CalculateTimeTransactions (category : Category, weeks : Int, date : Calendar, hour: Int) : Int

@@ -58,8 +58,8 @@ class PlannedTransactionsActivity : AppCompatActivity(), android.app.DatePickerD
         freqSpinner = dialogContentView?.findViewById(R.id.limits_item_frequency) as AppCompatSpinner
         freqSpinner?.adapter = ArrayAdapter<TransactionFrequency>(this, android.R.layout.simple_list_item_1, TransactionFrequency.values())
 
-        val deleteItem = dialogContentView?.findViewById(R.id.transaction_item_delete_iv) as ImageView
-        deleteItem.visibility = View.GONE
+//        val deleteItem = dialogContentView?.findViewById(R.id.transaction_item_delete_iv) as ImageView
+//        deleteItem.visibility = View.GONE
 
         dateEt = dialogContentView?.findViewById(R.id.transaction_item_date) as EditText
         dateEt?.setText(SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Calendar.getInstance().time))
@@ -120,7 +120,7 @@ class PlannedTransactionsActivity : AppCompatActivity(), android.app.DatePickerD
             DialogInterface.BUTTON_POSITIVE -> {
                 val frequency = freqSpinner?.selectedItem as TransactionFrequency
                 val transaction = PlannedTransaction(frequency)
-                transaction.price = (dialogContentView?.findViewById<EditText>(R.id.transaction_item_price))?.text.toString().toInt()
+                transaction.price = (dialogContentView?.findViewById<EditText>(R.id.transaction_item_price))?.text.toString().toDouble()
                 transaction.type = transactionType
                 transaction.description = (dialogContentView?.findViewById<EditText>(R.id.transaction_item_note))?.text.toString()
 
