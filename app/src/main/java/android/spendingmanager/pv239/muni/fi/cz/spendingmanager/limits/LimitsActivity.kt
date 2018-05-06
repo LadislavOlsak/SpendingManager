@@ -48,6 +48,7 @@ class LimitsActivity : AppCompatActivity() {
         adapter = CategoryLimitsAdapter(this@LimitsActivity, emptyList())
         limitsList.adapter = adapter
 
+        limits_save_changed_btn.setOnClickListener { saveChanges() }
     }
 
     private fun loadLimits() {
@@ -78,17 +79,5 @@ class LimitsActivity : AppCompatActivity() {
         }
 
         Toast.makeText(this, "TODO: Changes are saved!", Toast.LENGTH_LONG).show()
-    }
-
-    fun getViewByPosition(position: Int, listView: ListView): View {
-        val firstListItemPosition = listView.firstVisiblePosition
-        val lastListItemPosition = firstListItemPosition + listView.childCount - 1
-
-        if (position < firstListItemPosition || position > lastListItemPosition) {
-            return listView.adapter.getView(position, listView.getChildAt(position), listView)
-        } else {
-            val childIndex = position - firstListItemPosition
-            return listView.getChildAt(childIndex)
-        }
     }
 }

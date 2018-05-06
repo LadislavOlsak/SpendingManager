@@ -58,6 +58,7 @@ class CategoriesActivity : AppCompatActivity() {
         val customButton = findViewById<View>(R.id.categories_add_custom_button) as Button
         customButton.setOnClickListener {
             val newItem = customInput.text.toString()
+            customInput.setText("")
             val newCategory = Category(newItem, newItem, CategoryType.CUSTOM)
             FirebaseDb().createObject("categories", newCategory)
             val categoryLimit = CategoryLimit(newCategory.categoryName, 0.0, "CZK", false, TransactionFrequency.Monthly)
@@ -72,7 +73,7 @@ class CategoriesActivity : AppCompatActivity() {
 
             //menu.setHeaderTitle("Context Menu Example")
             menu.add(0, 0, 0, "Delete")
-            menu.add(0, 0, 0, "Edit (not implemented yet)")
+            //menu.add(0, 0, 0, "Edit (not implemented yet)")
         }
     }
 
@@ -83,10 +84,26 @@ class CategoriesActivity : AppCompatActivity() {
             val index = menuInfo.position
             var category = allCategories.get(index)
             FirebaseDb.getUserReference("categories")?.child(category.key)?.removeValue()
-            //FirebaseDb().deleteObject("categories", category.id)
+            deleteCategoryLimit(category.categoryName)
         } else {
             return false
         }
         return true
+    }
+
+    private fun deleteCategoryLimit(categoryName: String) {
+        FirebaseDb.getUserReference("categorylimits")?.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val limits = mutableListOf<CategoryLimit>()
+                snapshot.children.mapNotNullTo(limits) {
+                    val cl = it.getValue<CategoryLimit>(CategoryLimit::class.java)
+                    if (cl?.categoryName == categoryName) {
+                        FirebaseDb().deleteObject("categorylimits", it.key)
+                    }
+                    cl
+                }
+            }
+        })
     }
 }
