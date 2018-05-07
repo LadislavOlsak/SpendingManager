@@ -34,17 +34,7 @@ class AccountActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account)
 
-        initAccount()
-        setTitle()
-
         initTransactionSection()
-        accountDetailsAdapter = AccountDetailsAdapter(this, getDetailsMockData())
-        account_details_list_lv.adapter = accountDetailsAdapter
-
-        account_details_col_exp_tbtn.setOnCheckedChangeListener { _, checked ->
-            val visibility = if(checked) View.GONE else View.VISIBLE
-            account_details_content_layout.visibility = visibility
-        }
     }
 
     private fun initTransactionSection() {
@@ -78,17 +68,6 @@ class AccountActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener 
         FirebaseDb.getUserReference("transactions")?.orderByChild("datetime")?.addListenerForSingleValueEvent(transactionsListener)
     }
 
-    private fun setTitle() {
-        supportActionBar?.title = account?.accountName
-    }
-
-    private fun initAccount() {
-        account = Gson().fromJson(intent.getStringExtra("account"), Account::class.java)
-        if(account == null) {
-            throw IllegalArgumentException("Variable 'account' is not specified.")
-        }
-    }
-
     private fun displayTransactionDateFilterDialog() {
         val calendar = Calendar.getInstance()
         calendar.time = transactionFrom
@@ -118,15 +97,6 @@ class AccountActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener 
         }
     }
 
-    private fun getDetailsMockData() : List<AccountDetail> {
-        return listOf(
-                AccountDetail("Balance", ""),
-                AccountDetail("Planned Expenses", ""),
-                AccountDetail("Monthly Expenses", ""),
-                AccountDetail("Monthly Income", "")
-        )
-    }
-
     private fun getTransactionMockedData() {
 
         transactionsListener = object : ValueEventListener {
@@ -140,40 +110,12 @@ class AccountActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener 
                 val transactionsFromRange = transactions.filter { x -> !(x.datetime.before(transactionFrom) || x.datetime.after(transactionTo)) }
 
                 lastTransactionAdapter?.update(transactionsFromRange.reversed())
-                updateAccountDetails()
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 println("loadPost:onCancelled ${databaseError.toException()}")
             }
         }
         FirebaseDb.getUserReference("transactions")?.orderByChild("datetime")?.addValueEventListener(transactionsListener)
-    }
-
-    private fun updateAccountDetails() {
-        val plannedMonthExpenses = 0.0
-        var totalBalance = 0.0
-        var monthExpenses = 0.0
-        var monthIncome = 0.0
-        lastTransactionAdapter?.transactions?.stream()?.forEach { x ->
-            if(x.type == TransactionType.EXPENDITURE) {
-                totalBalance -= x.price
-                if(isThisMonth(x.datetime)) {
-                    monthExpenses += x.price
-                }
-            } else if (x.type == TransactionType.INCOME) {
-                totalBalance += x.price
-                if(isThisMonth(x.datetime)) {
-                    monthIncome += x.price
-                }
-            }
-        }
-        val currencySuffix = " CZK"
-
-        accountDetailsAdapter?.details?.get(0)?.value = totalBalance.toString() + currencySuffix
-        accountDetailsAdapter?.details?.get(1)?.value = plannedMonthExpenses.toString() + currencySuffix
-        accountDetailsAdapter?.details?.get(2)?.value = monthExpenses.toString() + currencySuffix
-        accountDetailsAdapter?.details?.get(3)?.value = monthIncome.toString() + currencySuffix
-        accountDetailsAdapter?.notifyDataSetChanged()
     }
 
     private fun isThisMonth(testDate: Date): Boolean {

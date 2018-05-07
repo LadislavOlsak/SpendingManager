@@ -14,6 +14,4 @@
 
     <include layout="@layout/account_graphs"/>
 
-    <include layout="@layout/account_last_transactions"/>
-
 </LinearLayout>

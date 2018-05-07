@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards.LoyaltyCardsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.account.AccountActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.account.AccountDetail
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.account.AccountDetailsAdapter
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.account.LastTransactionsAdapter
@@ -14,6 +15,7 @@ import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.Categ
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.DefaultCategories
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.limits.CategoryLimit
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.limits.FirebaseLimits
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.limits.LimitsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.login.LoginActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.login.UserData
@@ -132,6 +134,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_home -> {
                 //do nothing
             }
+            R.id.nav_transactions -> {
+                startActivity(Intent(this, AccountActivity::class.java))
+            }
             R.id.nav_loyalty_cards -> {
                 startActivity(Intent(this, LoyaltyCardsActivity::class.java))
             }
@@ -179,48 +184,67 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         calendar.add(Calendar.MONTH, -1)
         val monthAgo = calendar.time
 
-        setTransactionDateRange(monthAgo, now)
-
-        account_last_filter_iv.setOnClickListener { displayTransactionDateFilterDialog() }
         lastTransactionAdapter = LastTransactionsAdapter(this, mutableListOf())
-        account_last_transactions_lv.adapter = lastTransactionAdapter
+
+        setTransactionDateRange(monthAgo, now)
 
         initListenersForCollapseExpand()
 
-        account_graphs_timeframe_sp.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(p0: AdapterView<*>?) { }
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                setPieChart(currentLimit)
-            }
-        }
+        initDropdowns()
+    }
 
-        account_graphs_categories_sp.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(p0: AdapterView<*>?) { }
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                val selectedCatName = account_graphs_categories_sp.adapter.getItem(position)
-                if("Overall" == selectedCatName) {
-                    monthIncome = if(monthIncome == 0.0) 0.0001 else monthIncome
+    private fun initDropdowns() {
+        account_graphs_timeframe_sp.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                if (account_graphs_categories_sp.selectedItem == "Overall") {
+                    monthIncome = if (monthIncome == 0.0) 0.0001 else monthIncome
                     setPercentage(((monthExpenses / monthIncome) * 100.0f).toFloat())
                 } else {
-                    FirebaseDb.getUserReference("categorylimits")?.addListenerForSingleValueEvent( object : ValueEventListener {
-                        override fun onCancelled(p0: DatabaseError) { }
-                        override fun onDataChange(p0: DataSnapshot) {
-                            val list = mutableListOf<CategoryLimit>()
-                            p0.children.mapNotNullTo(list) {
-                                val limit = it.getValue<CategoryLimit>(CategoryLimit::class.java)
-                                if(limit?.categoryName == selectedCatName) {
-                                    setPieChart(limit as CategoryLimit)
-                                }
-                                limit
+                    setPieChart(currentLimit)
+                }
+            }
+        }
+        account_graphs_categories_sp.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+                val selectedCatName = account_graphs_categories_sp.adapter.getItem(position) as String
+                if ("Overall" == selectedCatName) {
+                    monthIncome = if (monthIncome == 0.0) 0.0001 else monthIncome
+                    setPercentage(((monthExpenses / monthIncome) * 100.0f).toFloat())
+                }
+                else {
+                    if(FirebaseLimits.limits == null || FirebaseLimits.limits?.isEmpty() == true) {
+                        loadLimits(selectedCatName)
+                    } else {
+                        FirebaseLimits.limits?.forEach { x ->
+                            if (x.categoryName == selectedCatName) {
+                                setPieChart(x)
                             }
                         }
-                    })
+                    }
                 }
             }
         }
         account_graphs_categories_sp.setSelection(0)
-
         loadCategoriesToDropdown()
+    }
+
+    private fun loadLimits(selectedCatName : String) {
+        FirebaseDb.getUserReference("categorylimits")?.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+            override fun onDataChange(p0: DataSnapshot) {
+                val list = mutableListOf<CategoryLimit>()
+                p0.children.mapNotNullTo(list) {
+                    val limit = it.getValue<CategoryLimit>(CategoryLimit::class.java)
+                    if (limit?.categoryName == selectedCatName) {
+                        setPieChart(limit)
+                    }
+                    limit
+                }
+                FirebaseLimits.limits = list
+            }
+        })
     }
 
     private fun setPieChart(limit : CategoryLimit?) {
@@ -237,18 +261,45 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun setPercentage(percentage: Float) {
-        chart_pieView.percentage = percentage
-        chart_pieView.setPercentageBackgroundColor(getColor(chart_pieView.percentage))
-        val animation = PieAngleAnimation(chart_pieView)
-        animation.duration = 2000
-        chart_pieView.startAnimation(animation)
+        val frequency = getFrequency(account_graphs_timeframe_sp.selectedItem as String)
+        val progressPercentage = (getDayNumber(frequency).toFloat() / getTotalDaysInFrequency(frequency).toFloat()) * 100.0f
+        chart_total_progress_pieView.percentage = percentage - progressPercentage
+        chart_total_progress_pieView.setPercentageBackgroundColor(getProgressColor(chart_total_allowance_pieView.percentage))
+        val animation1 = PieAngleAnimation(chart_total_progress_pieView)
+        animation1.duration = 2000
+        chart_total_progress_pieView.startAnimation(animation1)
+
+        chart_total_allowance_pieView.percentage = percentage
+        chart_total_allowance_pieView.setPercentageBackgroundColor(getColor(chart_total_allowance_pieView.percentage))
+        val animation2 = PieAngleAnimation(chart_total_allowance_pieView)
+        animation2.duration = 2000
+        chart_total_allowance_pieView.startAnimation(animation2)
+    }
+
+    private fun getDayNumber(frequency : Int) : Int {
+        val c = Calendar.getInstance()
+        return when(frequency) {
+            1 -> c.get(Calendar.DAY_OF_MONTH)
+            4 -> c.get(Calendar.DAY_OF_WEEK)
+            30 -> 1
+            else -> 30
+        }
+    }
+
+    private fun getTotalDaysInFrequency(frequency: Int) : Int {
+        return when(frequency) {
+            1 -> 30
+            4 -> 7
+            30 -> 1
+            else -> 30
+        }
     }
 
     private fun getFrequency(frequency : String) : Int {
         return when (frequency.toLowerCase()) {
             "daily" -> 30
             "weekly" -> 4
-            "biweekly" -> 2
+            //"biweekly" -> 2
             "monthly" -> 1
             else -> 1
         }
@@ -272,10 +323,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun initListenersForCollapseExpand() {
-        account_last_transaction_col_exp_tbtn.setOnCheckedChangeListener { _, checked ->
-            val visibility = if (checked) View.GONE else View.VISIBLE
-            account_last_transaction_content_layout.visibility = visibility
-        }
         account_details_col_exp_tbtn.setOnCheckedChangeListener { _, checked ->
             val visibility = if (checked) View.GONE else View.VISIBLE
             account_details_content_layout.visibility = visibility
@@ -290,7 +337,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val dateFormatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
         val toDateString = dateFormatter.format(toDate)
         val fromDateString = dateFormatter.format(fromDate)
-        account_last_transaction_date_range_tv.text = "$fromDateString - $toDateString"
+        //account_last_transaction_date_range_tv.text = "$fromDateString - $toDateString"
 
         transactionFrom = fromDate
         transactionTo = toDate
@@ -400,5 +447,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             in 50.0..75.0 -> ContextCompat.getColor(this, R.color.pie_orange)
             else -> ContextCompat.getColor(this, R.color.pie_red)
         }
+    }
+
+    private fun getProgressColor(percentage : Float) : Int {
+        return if ( percentage <= 0.0) ContextCompat.getColor(this, R.color.pie_green)
+            else ContextCompat.getColor(this, R.color.pie_red)
     }
 }
