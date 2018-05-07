@@ -74,4 +74,11 @@
     <string name="please_select_place">Please select place</string>
     <string name="add_category">Add category</string>
     <string name="add">Add</string>
+    <string name="expenditures">Expenditures</string>
+    <string name="date_range">Date Range</string>
+
+    <string name="day">Daily</string>
+    <string name="weekly">Weekly</string>
+    <string name="biweekly">Biweekly</string>
+    <string name="monthly">Monthly</string>
 </resources>

@@ -36,4 +36,11 @@
         <item>@color/md_blue_grey_500</item>
         <item>@color/md_white_1000</item>
     </array>
+
+    <string-array name="frequency">
+        <item>@string/monthly</item>
+        <item>@string/biweekly</item>
+        <item>@string/weekly</item>
+        <item>@string/day</item>
+    </string-array>
 </resources>

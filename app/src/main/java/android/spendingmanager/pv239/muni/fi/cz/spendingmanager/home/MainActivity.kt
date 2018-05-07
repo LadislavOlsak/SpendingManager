@@ -2,37 +2,66 @@ package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.home
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards.LoyaltyCardsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.account.AccountDetail
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.account.AccountDetailsAdapter
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.account.LastTransactionsAdapter
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.AllCategories
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.CategoriesActivity
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.Category
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.DefaultCategories
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.limits.CategoryLimit
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.limits.LimitsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.login.LoginActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.login.UserData
-import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards.LoyaltyCard
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.planning.PlannedTransactionsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.statistics.StatisticsActivity
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.Transaction
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionActivity
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionType
 import android.support.design.widget.NavigationView
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.AppCompatSpinner
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.firebase.ui.auth.AuthUI
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.content_main.*
-import java.math.BigDecimal
 import java.util.*
 import android.widget.Toast
+import az.plainpie.animation.PieAngleAnimation
+import com.borax12.materialdaterangepicker.date.DatePickerDialog
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import kotlinx.android.synthetic.main.account_details.*
+import kotlinx.android.synthetic.main.account_graphs.*
+import kotlinx.android.synthetic.main.account_last_transactions.*
+import java.text.SimpleDateFormat
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
+        DatePickerDialog.OnDateSetListener  {
 
     private val LOGIN_ACTIVITY_RESULT_CODE = 12
+    var transactionFrom : Date? = null
+    var transactionTo : Date? = null
+    private var lastTransactionAdapter : LastTransactionsAdapter? = null
+    private var accountDetailsAdapter : AccountDetailsAdapter? = null
+    private var transactionsListener : ValueEventListener? = null
+    private var currentLimit : CategoryLimit? = null
+
+    private var monthExpenses = 0.0
+    private var monthIncome = 0.0
+    private var totalBalance = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,21 +75,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             startTransactionActivity()
         }
 
-        //todo load data
-        val accounts = listOf(
-            Account("My Cash Account", Currency.getInstance("CZK"), BigDecimal("1000.0"))
-        )
-        main_accounts_list.adapter = AccountsAdapter(this, accounts)
-
-        main_account_stats.adapter = AccountStatsAdapter(this, listOf(AccountStats("A", 1.1f),
-                AccountStats("B", 25.1f),
-                AccountStats("C", 56.3f), AccountStats("D", 99.9f)))
+        accountDetailsAdapter = AccountDetailsAdapter(this, getDetailsMockData())
+        account_details_list_lv.adapter = accountDetailsAdapter
     }
 
     private fun startLoginIntent() {
         if(!UserData.isUserLoggedIn()) {
             val loginIntent = Intent(this, LoginActivity::class.java)
             startActivityForResult(loginIntent, LOGIN_ACTIVITY_RESULT_CODE)
+        } else {
+            initTransactionSection()
         }
     }
 
@@ -69,6 +93,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         if (requestCode == LOGIN_ACTIVITY_RESULT_CODE && resultCode == Activity.RESULT_OK) {
             setUserDetails()
+            initTransactionSection()
         }
     }
 
@@ -144,5 +169,236 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun startTransactionActivity() {
         startActivity(Intent(this, TransactionActivity::class.java))
+    }
+
+    private fun initTransactionSection() {
+        getTransactionMockedData()
+
+        val calendar = Calendar.getInstance()
+        val now = calendar.time
+        calendar.add(Calendar.MONTH, -1)
+        val monthAgo = calendar.time
+
+        setTransactionDateRange(monthAgo, now)
+
+        account_last_filter_iv.setOnClickListener { displayTransactionDateFilterDialog() }
+        lastTransactionAdapter = LastTransactionsAdapter(this, mutableListOf())
+        account_last_transactions_lv.adapter = lastTransactionAdapter
+
+        initListenersForCollapseExpand()
+
+        account_graphs_timeframe_sp.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) { }
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                setPieChart(currentLimit)
+            }
+        }
+
+        account_graphs_categories_sp.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) { }
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+                val selectedCatName = account_graphs_categories_sp.adapter.getItem(position)
+                if("Overall" == selectedCatName) {
+                    monthIncome = if(monthIncome == 0.0) 0.0001 else monthIncome
+                    setPercentage(((monthExpenses / monthIncome) * 100.0f).toFloat())
+                } else {
+                    FirebaseDb.getUserReference("categorylimits")?.addListenerForSingleValueEvent( object : ValueEventListener {
+                        override fun onCancelled(p0: DatabaseError) { }
+                        override fun onDataChange(p0: DataSnapshot) {
+                            val list = mutableListOf<CategoryLimit>()
+                            p0.children.mapNotNullTo(list) {
+                                val limit = it.getValue<CategoryLimit>(CategoryLimit::class.java)
+                                if(limit?.categoryName == selectedCatName) {
+                                    setPieChart(limit as CategoryLimit)
+                                }
+                                limit
+                            }
+                        }
+                    })
+                }
+            }
+        }
+        account_graphs_categories_sp.setSelection(0)
+
+        loadCategoriesToDropdown()
+    }
+
+    private fun setPieChart(limit : CategoryLimit?) {
+        if(limit == null) {
+            return
+        }
+        val frequency = getFrequency(account_graphs_timeframe_sp.selectedItem as String)
+        val totalLimit = limit.limitAmount.toFloat() / frequency
+
+        //todo load real transaction based on date today/this week/ this month etc.
+        val percentage = if(totalLimit == 0.0f) 0.0001f else (3000.0f / totalLimit) * 100.0f
+        setPercentage(percentage)
+        currentLimit = limit
+    }
+
+    private fun setPercentage(percentage: Float) {
+        chart_pieView.percentage = percentage
+        chart_pieView.setPercentageBackgroundColor(getColor(chart_pieView.percentage))
+        val animation = PieAngleAnimation(chart_pieView)
+        animation.duration = 2000
+        chart_pieView.startAnimation(animation)
+    }
+
+    private fun getFrequency(frequency : String) : Int {
+        return when (frequency.toLowerCase()) {
+            "daily" -> 30
+            "weekly" -> 4
+            "biweekly" -> 2
+            "monthly" -> 1
+            else -> 1
+        }
+    }
+
+    private fun loadCategoriesToDropdown() {
+        AllCategories.getCustomCategories(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val categories = mutableListOf<String>("Overall")
+                categories.addAll(DefaultCategories.getDefaultCategories().map { x -> x.categoryName }.toMutableList())
+                snapshot.children.forEach { postSnapshot ->
+                    val category = postSnapshot.getValue<Category>(Category::class.java) as Category
+                    category.key = postSnapshot.key
+                    categories.add(category.categoryName)
+                }
+                account_graphs_categories_sp.adapter = ArrayAdapter<String>(this@MainActivity, android.R.layout.simple_spinner_dropdown_item, categories)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {}
+        })
+    }
+
+    private fun initListenersForCollapseExpand() {
+        account_last_transaction_col_exp_tbtn.setOnCheckedChangeListener { _, checked ->
+            val visibility = if (checked) View.GONE else View.VISIBLE
+            account_last_transaction_content_layout.visibility = visibility
+        }
+        account_details_col_exp_tbtn.setOnCheckedChangeListener { _, checked ->
+            val visibility = if (checked) View.GONE else View.VISIBLE
+            account_details_content_layout.visibility = visibility
+        }
+        account_graphs_col_exp_tbtn.setOnCheckedChangeListener { _, checked ->
+            val visibility = if (checked) View.GONE else View.VISIBLE
+            account_graphs_content_layout.visibility = visibility
+        }
+    }
+
+    private fun setTransactionDateRange(fromDate : Date, toDate: Date) {
+        val dateFormatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+        val toDateString = dateFormatter.format(toDate)
+        val fromDateString = dateFormatter.format(fromDate)
+        account_last_transaction_date_range_tv.text = "$fromDateString - $toDateString"
+
+        transactionFrom = fromDate
+        transactionTo = toDate
+
+        FirebaseDb.getUserReference("transactions")?.orderByChild("datetime")?.addListenerForSingleValueEvent(transactionsListener)
+    }
+
+    private fun displayTransactionDateFilterDialog() {
+        val calendar = Calendar.getInstance()
+        calendar.time = transactionFrom
+
+        val dpd = com.borax12.materialdaterangepicker.date.DatePickerDialog.newInstance(
+                this@MainActivity,
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+        )
+        dpd.maxDate = Calendar.getInstance()
+        dpd.show(fragmentManager, "DatePickerDialog")
+    }
+
+    override fun onDateSet(view: DatePickerDialog?, year: Int, monthOfYear: Int, dayOfMonth: Int, yearEnd: Int, monthOfYearEnd: Int, dayOfMonthEnd: Int) {
+        val calendar = Calendar.getInstance()
+
+        calendar.set(year, monthOfYear, dayOfMonth, 0, 0)
+        val fromDate = calendar.time
+
+        calendar.set(yearEnd, monthOfYearEnd, dayOfMonthEnd, 0, 0)
+        val toDate = calendar.time
+        if(fromDate.after(toDate)) {
+            Toast.makeText(this, "Invalid Dates: from date must be before end date.", Toast.LENGTH_LONG).show()
+        }else {
+            setTransactionDateRange(fromDate, toDate)
+        }
+    }
+
+    private fun getDetailsMockData() : List<AccountDetail> {
+        return listOf(
+                AccountDetail("Balance", ""),
+                AccountDetail("Planned Expenses", ""),
+                AccountDetail("Monthly Expenses", ""),
+                AccountDetail("Monthly Income", "")
+        )
+    }
+
+    private fun getTransactionMockedData() {
+
+        transactionsListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val transactions = mutableListOf<Transaction>()
+                dataSnapshot.children.mapNotNullTo(transactions) {
+                    val transaction = it.getValue<Transaction>(Transaction::class.java)
+                    transaction?.key = it.key
+                    transaction
+                }
+                val transactionsFromRange = transactions.filter { x -> !(x.datetime.before(transactionFrom) || x.datetime.after(transactionTo)) }
+
+                lastTransactionAdapter?.update(transactionsFromRange.reversed())
+                updateAccountDetails()
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                println("loadPost:onCancelled ${databaseError.toException()}")
+            }
+        }
+        FirebaseDb.getUserReference("transactions")?.orderByChild("datetime")?.addValueEventListener(transactionsListener)
+    }
+
+    private fun updateAccountDetails() {
+        val plannedMonthExpenses = 0.0
+        monthExpenses = 0.0
+        totalBalance = 0.0
+        monthIncome = 0.0
+
+        lastTransactionAdapter?.transactions?.stream()?.forEach { x ->
+            if(x.type == TransactionType.EXPENDITURE) {
+                totalBalance -= x.price
+                if(isThisMonth(x.datetime)) {
+                    monthExpenses += x.price
+                }
+            } else if (x.type == TransactionType.INCOME) {
+                totalBalance += x.price
+                if(isThisMonth(x.datetime)) {
+                    monthIncome += x.price
+                }
+            }
+        }
+        val currencySuffix = " CZK"
+
+        accountDetailsAdapter?.details?.get(0)?.value = totalBalance.toString() + currencySuffix
+        accountDetailsAdapter?.details?.get(1)?.value = plannedMonthExpenses.toString() + currencySuffix
+        accountDetailsAdapter?.details?.get(2)?.value = monthExpenses.toString() + currencySuffix
+        accountDetailsAdapter?.details?.get(3)?.value = monthIncome.toString() + currencySuffix
+        accountDetailsAdapter?.notifyDataSetChanged()
+    }
+
+    private fun isThisMonth(testDate: Date): Boolean {
+        val testCalendar = Calendar.getInstance()
+        testCalendar.time = testDate
+        val thisMonth = Calendar.getInstance().get(Calendar.MONTH)
+        return testCalendar.get(Calendar.MONTH) == thisMonth
+    }
+
+    private fun getColor(percentage : Float) : Int {
+        return when (percentage) {
+            in 0.0..25.0 -> ContextCompat.getColor(this, R.color.pie_green)
+            in 25.0..50.0 -> ContextCompat.getColor(this, R.color.pie_yellow)
+            in 50.0..75.0 -> ContextCompat.getColor(this, R.color.pie_orange)
+            else -> ContextCompat.getColor(this, R.color.pie_red)
+        }
     }
 }
