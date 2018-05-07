@@ -9,6 +9,10 @@
             android:icon="@drawable/ic_home_black"
             android:title="@string/home" />
         <item
+            android:id="@+id/nav_transactions"
+            android:icon="@drawable/ic_attach_money_black_24dp"
+            android:title="@string/transactions"/>
+        <item
             android:id="@+id/nav_loyalty_cards"
             android:icon="@drawable/ic_card_membership_black_24dp"
             android:title="@string/loyalty_cards" />

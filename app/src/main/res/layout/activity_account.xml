@@ -8,6 +8,5 @@
     tools:context=".account.AccountActivity"
     android:orientation="vertical">
 
-    <include layout="@layout/account_details"/>
     <include layout="@layout/account_last_transactions"/>
 </LinearLayout>

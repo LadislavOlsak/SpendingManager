@@ -44,7 +44,8 @@
             android:name=".loyaltycards.NewLoyaltyCardActivity"
             android:label="@string/title_activity_new_loyalty_card"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".account.AccountActivity" />
+        <activity android:name=".account.AccountActivity"
+            android:label="@string/last_transactions"/>
         <activity
             android:name=".limits.LimitsActivity"
             android:label="@string/category_limits" />

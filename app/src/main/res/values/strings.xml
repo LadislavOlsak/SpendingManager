@@ -81,4 +81,10 @@
     <string name="weekly">Weekly</string>
     <string name="biweekly">Biweekly</string>
     <string name="monthly">Monthly</string>
+    <string name="transactions">Transactions</string>
+    <string name="time_frame">Time frame</string>
+
+    <string name="allowance_info">You\'ve used %1$s%% of your allowance.</string>
+    <string name="allowance_used">Allowance used</string>
+    <string name="actual_spending">Actual Spending</string>
 </resources>
