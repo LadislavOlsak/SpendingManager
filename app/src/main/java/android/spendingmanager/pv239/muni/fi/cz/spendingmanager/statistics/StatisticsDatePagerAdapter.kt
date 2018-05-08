@@ -17,10 +17,10 @@ class StatisticsDatePagerAdapter(fragmentManager: FragmentManager) : FragmentSta
 
         when (position) {
             0 -> {
-                return StatisticsDateGeneral()
+                return StatisticsDateGraphs()
             }
             1 -> {
-                return StatisticsDateGraphs()
+                return StatisticsDateGeneral()
             }
             else -> return null
         }

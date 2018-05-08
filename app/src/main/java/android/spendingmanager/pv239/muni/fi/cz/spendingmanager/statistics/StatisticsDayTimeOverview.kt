@@ -26,10 +26,10 @@ class StatisticsDayTimeOverview : Fragment() {
         val view = inflater.inflate(R.layout.statistics_day_time_overview, container, false)
 
         val weeksSpiner = view.findViewById<View>(R.id.weeksSpinner) as Spinner
-        val items = arrayOf("1", "2", "3", "4", "5", "6","7", "8", "9", "10", "20", "52")
+        val items = arrayOf("1", "2", "3", "4 (month)", "52 (year)")
         val weeksSpinerAdapter = ArrayAdapter<String>(activity, android.R.layout.simple_spinner_dropdown_item, items)
         weeksSpiner.adapter = weeksSpinerAdapter
-        val spinnerPosition = weeksSpinerAdapter.getPosition("4")
+        val spinnerPosition = weeksSpinerAdapter.getPosition("4 (month)")
         weeksSpiner.setSelection(spinnerPosition)
 
         val categoryListView = view.findViewById<View>(R.id.categories_list) as ListView
@@ -63,7 +63,8 @@ class StatisticsDayTimeOverview : Fragment() {
     private fun GenerateGraphs(view: View, weeksSpiner: Spinner, categoryListView : ListView)
     {
         val currentDate = GregorianCalendar.getInstance()
-        val weeksCount : Int = weeksSpiner.selectedItem.toString().toInt()
+        val onlyNumbers = Regex("[^0-9]")
+        val weeksCount : Int = onlyNumbers.replace(weeksSpiner.selectedItem.toString(), "").toInt()
 
         val chart = view.findViewById<View>(R.id.chart) as LineChart
         chart.removeAllViews()

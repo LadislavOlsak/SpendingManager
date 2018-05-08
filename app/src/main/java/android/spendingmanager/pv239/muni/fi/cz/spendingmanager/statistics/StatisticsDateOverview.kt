@@ -29,8 +29,8 @@ class StatisticsDateOverview : Fragment() {
 
 
         val statisticsDateTabs = view.findViewById<View>(R.id.statistics_date_tabs) as TabLayout
-        statisticsDateTabs.addTab(statisticsDateTabs.newTab().setText("General"))
         statisticsDateTabs.addTab(statisticsDateTabs.newTab().setText("Graphs"))
+        statisticsDateTabs.addTab(statisticsDateTabs.newTab().setText("General"))
         statisticsDateTabs.tabGravity = TabLayout.GRAVITY_FILL
 
         val statisticsDateViewpager = view.findViewById<View>(R.id.statistics_date_viewpager) as ViewPager

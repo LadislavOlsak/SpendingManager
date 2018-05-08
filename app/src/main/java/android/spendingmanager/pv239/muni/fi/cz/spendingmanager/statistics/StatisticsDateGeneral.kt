@@ -24,10 +24,10 @@ class StatisticsDateGeneral : Fragment() {
         val view = inflater.inflate(R.layout.statistics_date_general, container, false)
 
         val weeksSpiner = view.findViewById<View>(R.id.weeksSpinner) as Spinner
-        val items = arrayOf("1", "2", "3", "4", "5", "6","7", "8", "9", "10", "20", "52")
+        val items = arrayOf("1", "2", "3", "4 (month)", "52 (year)")
         val weeksSpinerAdapter = ArrayAdapter<String>(activity, android.R.layout.simple_spinner_dropdown_item, items)
         weeksSpiner.adapter = weeksSpinerAdapter
-        val spinnerPosition = weeksSpinerAdapter.getPosition("4")
+        val spinnerPosition = weeksSpinerAdapter.getPosition("4 (month)")
         weeksSpiner.setSelection(spinnerPosition)
 
         var btnWeekSpinner = view.findViewById<View>(R.id.btnWeeksSpinner) as Button
@@ -75,14 +75,16 @@ class StatisticsDateGeneral : Fragment() {
             row.addView(txt1)
 
             val currentDate = GregorianCalendar.getInstance()
-            val value = StatisticsHelper().CalculateValueTransactions(category, weeksSpiner.selectedItem.toString().toInt(), currentDate)
+            val onlyNumbers = Regex("[^0-9]")
+            val weeksCount : Int = onlyNumbers.replace(weeksSpiner.selectedItem.toString(), "").toInt()
+            val value = StatisticsHelper().CalculateValueTransactions(category, weeksCount, currentDate)
             val txt2 = EditText(activity)
             txt2.setText(value.toString())
             row.addView(txt2)
 
             // TODO: Vypočítat minulé období
-            val lastSeasonDate = StatisticsHelper().CalculateStartDate(weeksSpiner.selectedItem.toString().toInt(), currentDate, 1)
-            val lastSeasonValue = StatisticsHelper().CalculateValueTransactions(category, weeksSpiner.selectedItem.toString().toInt(), lastSeasonDate)
+            val lastSeasonDate = StatisticsHelper().CalculateStartDate(weeksCount, currentDate, 1)
+            val lastSeasonValue = StatisticsHelper().CalculateValueTransactions(category, weeksCount, lastSeasonDate)
             var ratio = 0.0
             if (lastSeasonValue != 0.0)
             {
@@ -110,7 +112,10 @@ class StatisticsDateGeneral : Fragment() {
         }
 
         var tableDatesNote = view.findViewById<View>(R.id.tableDatesNote) as TextView
-        tableDatesNote.text = "* Comparison to previous " + weeksSpiner.selectedItem.toString() + " weeks"
+
+        val onlyNumbers = Regex("[^0-9]")
+        val weeksCount : Int = onlyNumbers.replace(weeksSpiner.selectedItem.toString(), "").toInt()
+        tableDatesNote.text = "* Comparison to previous " + weeksCount + " weeks"
     }
 }
 

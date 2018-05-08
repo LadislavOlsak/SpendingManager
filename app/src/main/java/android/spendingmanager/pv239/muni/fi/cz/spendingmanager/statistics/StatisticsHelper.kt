@@ -1,59 +1,43 @@
 package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.statistics
 
-import android.content.res.Resources
 import android.graphics.Color
-import android.os.Bundle
-import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.AllCategories
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.Category
-import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.CategoryType
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.DefaultCategories
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.Transaction
-import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionType
-import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import java.util.*
 
 
-
 public class StatisticsHelper {
 
-    constructor()  {
-        categories = listOf(
-                Category("food", "food_and_drinks", CategoryType.DEFAULT),
-                Category("housing", "housing", CategoryType.DEFAULT),
-                Category("entertainment", "entertainment", CategoryType.DEFAULT),
-                Category("others", "others", CategoryType.DEFAULT),
-                Category("shopping", "shopping", CategoryType.DEFAULT))
+    var categories : MutableList<Category> = mutableListOf()
+    var transactions : MutableList<Transaction> = mutableListOf()
 
-        val date = Calendar.getInstance().time
-        transactions = mutableListOf(
-                Transaction(TransactionType.EXPENDITURE, 2500.0, categories[1], "Something...", date, LatLng(49.247, 16.685), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 1500.0, categories[1], "Something...", date, LatLng(49.385, 16.665), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 1800.0, categories[1], "Something...", date, LatLng(49.225, 16.889), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 3000.0, categories[1], "Something...", date, LatLng(49.213, 16.789), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 250.0, categories[0], "Some meet and fruits", date, LatLng(52.248, 17.685), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 80.0, categories[0], "Some meet and fruits", date, LatLng(60.247, 15.669), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 40.0, categories[0], "Bread and rolls", date, LatLng(49.247, 16.458), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 850.0, categories[0], "Everything", date, LatLng(49.269, 16.447), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 563.0, categories[0], "Something...", date, LatLng(49.651, 16.569), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 85.0, categories[0], "Something...", date, LatLng(49.374, 16.786), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 420.0, categories[0], "Something...", date, LatLng(49.295, 16.366), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 236.0, categories[0], "Something...", date, LatLng(49.418, 16.346), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 2500.0, categories[1], "Something...", date, LatLng(49.247, 16.685), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 1500.0, categories[1], "Something...", date, LatLng(49.385, 16.665), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 1800.0, categories[1], "Something...", date, LatLng(49.225, 16.889), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 3000.0, categories[1], "Something...", date, LatLng(49.213, 16.789), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 250.0, categories[0], "Some meet and fruits", date, LatLng(52.248, 17.685), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 80.0, categories[0], "Some meet and fruits", date, LatLng(60.247, 15.669), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 40.0, categories[0], "Bread and rolls", date, LatLng(49.247, 16.458), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 850.0, categories[0], "Everything", date, LatLng(49.269, 16.447), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 563.0, categories[0], "Something...", date, LatLng(49.651, 16.569), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 85.0, categories[0], "Something...", date, LatLng(49.374, 16.786), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 420.0, categories[0], "Something...", date, LatLng(49.295, 16.366), "CZK"),
-                Transaction(TransactionType.EXPENDITURE, 236.0, categories[0], "Something...", date, LatLng(49.418, 16.346), "CZK")
-        )
+    constructor()  {
+        Load()
+    }
+
+    private fun Load()
+    {
+        AllCategories.getCustomCategories(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val list = mutableListOf<Category>()
+                snapshot.children.mapNotNullTo(list) {
+                    val category = it.getValue<Category>(Category::class.java)
+                    category?.key = it.key
+                    category
+                }
+                categories.clear()
+                list.forEach { x -> categories.add(x) }
+                DefaultCategories.getDefaultCategories().forEach { x -> categories.add(x) }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {}
+        })
 
         val transactionsListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -63,20 +47,16 @@ public class StatisticsHelper {
                     transaction
                 }
             }
+
             override fun onCancelled(databaseError: DatabaseError) {
                 println("loadPost:onCancelled ${databaseError.toException()}")
             }
         }
         FirebaseDb.getUserReference("transactions")?.addValueEventListener(transactionsListener)
-
     }
-
-    var categories : List<Category>
-    var transactions : MutableList<Transaction> = mutableListOf()
-
     public fun GetCategories () : List<Category>
     {
-        return categories;
+        return categories
     }
 
     public fun GetTransactions (category : Category, weeks : Int, endDate : Calendar, hour : Int?) : List<Transaction>
