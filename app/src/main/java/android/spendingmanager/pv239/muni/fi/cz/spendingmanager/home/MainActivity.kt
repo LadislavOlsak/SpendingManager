@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        //setSupportActionBar(toolbar)
         nav_view.setNavigationItemSelectedListener(this)
 
         startLoginIntent()
@@ -264,7 +264,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val frequency = getFrequency(account_graphs_timeframe_sp.selectedItem as String)
         val progressPercentage = (getDayNumber(frequency).toFloat() / getTotalDaysInFrequency(frequency).toFloat()) * 100.0f
         chart_total_progress_pieView.percentage = percentage - progressPercentage
-        chart_total_progress_pieView.setPercentageBackgroundColor(getProgressColor(chart_total_allowance_pieView.percentage))
+        chart_total_progress_pieView.setPercentageBackgroundColor(getProgressColor(chart_total_progress_pieView.percentage))
         val animation1 = PieAngleAnimation(chart_total_progress_pieView)
         animation1.duration = 2000
         chart_total_progress_pieView.startAnimation(animation1)

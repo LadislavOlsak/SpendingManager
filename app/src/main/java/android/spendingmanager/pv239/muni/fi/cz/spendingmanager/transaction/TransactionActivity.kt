@@ -30,6 +30,7 @@ import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.DatePick
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.location.LocationActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.location.PoiPlace
 import android.support.v4.app.*
+import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.DataSnapshot
@@ -142,18 +143,10 @@ class TransactionActivity : AppCompatActivity() {
         }
     }
 
-    class PlaceholderFragment : Fragment(), android.app.DatePickerDialog.OnDateSetListener {
+    class PlaceholderFragment : Fragment() {
 
         private val LOCATION_ACTIVITY_REQUEST = 13
-        private var dateEt : EditText? = null
-
-        override fun onDateSet(p0: DatePicker?, p1: Int, p2: Int, p3: Int) {
-
-            val c = Calendar.getInstance()
-            c.set(p1, p2, p3)
-            dateEt?.setText(SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(c.time))
-        }
-
+        private var dateTv : TextView? = null
         var fragmentPosition : Int = -1
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -162,8 +155,8 @@ class TransactionActivity : AppCompatActivity() {
 
             val rootView = inflater.inflate(R.layout.fragment_transaction, container, false)
 
-            dateEt = rootView?.findViewById(R.id.transaction_item_date) as EditText
-            dateEt?.setText(SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Calendar.getInstance().time))
+            dateTv = rootView?.findViewById(R.id.transaction_item_date) as TextView
+            setDateAndTime(Calendar.getInstance().time)
 
             val transactionFab = rootView.findViewById<View>(R.id.transaction_fab) as FloatingActionButton
             transactionFab.setOnClickListener { save(rootView, fragmentPosition) }
@@ -182,8 +175,10 @@ class TransactionActivity : AppCompatActivity() {
                 override fun onCancelled(databaseError: DatabaseError) {}
             })
 
-            val dateBtn = rootView.findViewById(R.id.transaction_item_date_btn) as Button
-            dateBtn.setOnClickListener { DatePickerDialog(activity as Activity).create(this).show() }
+            val timeBtn = rootView.findViewById(R.id.transaction_item_time_btn) as Button
+            timeBtn.setOnClickListener { DateTimePickerDialog().create(activity as Activity).setListener { date ->
+                setDateAndTime(date)
+            }.display() }
 
             val mapBtn = rootView.findViewById(R.id.transaction_item_map_btn) as Button
             mapBtn.setOnClickListener {
@@ -191,6 +186,10 @@ class TransactionActivity : AppCompatActivity() {
             }
 
             return rootView
+        }
+
+        private fun setDateAndTime(date : Date) {
+            dateTv?.text = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).format(date)
         }
 
         companion object {
@@ -225,9 +224,9 @@ class TransactionActivity : AppCompatActivity() {
             val categorySpinner = rootView.findViewById(R.id.transaction_item_category) as AppCompatSpinner
             val noteEt = rootView.findViewById(R.id.transaction_item_note) as EditText
             val priceEt = rootView.findViewById(R.id.transaction_item_price) as EditText
-            val dateEt = rootView.findViewById(R.id.transaction_item_date) as EditText
+            val dateTv = rootView.findViewById(R.id.transaction_item_date) as TextView
 
-            val selectedDate: Date = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateEt.text.toString())
+            val selectedDate: Date = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).parse(dateTv.text.toString())
             val type : TransactionType = if(fragmentPosition == 0) TransactionType.EXPENDITURE else TransactionType.INCOME
             val price = priceEt.text.toString().toDoubleOrNull()
             val description = noteEt.text.toString()
