@@ -7,11 +7,13 @@ import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.DatePickerDialog
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.DateTimePickerDialog
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionType
 import android.support.v7.widget.AppCompatSpinner
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -20,15 +22,20 @@ import kotlinx.android.synthetic.main.planned_transaction_income.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class PlannedTransactionsActivity : AppCompatActivity(), android.app.DatePickerDialog.OnDateSetListener {
+class PlannedTransactionsActivity : AppCompatActivity() {
 
     private var dialogContentView : View? = null
     private var freqSpinner : AppCompatSpinner? = null
-    private var dateEt : EditText? = null
+    private var dateTv : TextView? = null
     private var transactionType = TransactionType.EXPENDITURE
 
     private var plannedExpenseAdapter : PlannedTransactionAdapter = PlannedTransactionAdapter(this, mutableListOf())
     private var plannedIncomeAdapter : PlannedTransactionAdapter = PlannedTransactionAdapter(this, mutableListOf())
+
+    private var dialog : AlertDialog? = null
+    private var singleDateAndTimePickerDialog : SingleDateAndTimePickerDialog? = null
+
+    companion object { var isDialogOpened = false }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,14 +50,14 @@ class PlannedTransactionsActivity : AppCompatActivity(), android.app.DatePickerD
     }
 
     private fun createNewPlannedTransaction(tranType: TransactionType) {
-        val dialog = AlertDialog.Builder(this)
+        dialog = AlertDialog.Builder(this)
                                 .setPositiveButton("Save", dialogListener)
                                 .setNegativeButton("Cancel", dialogListener)
                                 .create()
 
         dialogContentView = this.layoutInflater.inflate(R.layout.transaction_item, null) as View
-        dialog.setView(dialogContentView)
-        dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        dialog?.setView(dialogContentView)
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
         val frequencyLayout = dialogContentView?.findViewById(R.id.transaction_item_frequency_layout) as LinearLayout
         frequencyLayout.visibility = View.VISIBLE
@@ -58,29 +65,45 @@ class PlannedTransactionsActivity : AppCompatActivity(), android.app.DatePickerD
         freqSpinner = dialogContentView?.findViewById(R.id.limits_item_frequency) as AppCompatSpinner
         freqSpinner?.adapter = ArrayAdapter<TransactionFrequency>(this, android.R.layout.simple_list_item_1, TransactionFrequency.values())
 
-//        val deleteItem = dialogContentView?.findViewById(R.id.transaction_item_delete_iv) as ImageView
-//        deleteItem.visibility = View.GONE
+        dateTv = dialogContentView?.findViewById(R.id.transaction_item_date) as TextView
+        setDateAndTime(Calendar.getInstance().time)
 
-        dateEt = dialogContentView?.findViewById(R.id.transaction_item_date) as EditText
-        dateEt?.setText(SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Calendar.getInstance().time))
-
-        val dateButton = dialogContentView?.findViewById<Button>(R.id.transaction_item_date_btn)
-        dateButton?.setOnClickListener { DatePickerDialog(this).create(this).show() }
+        val dateButton = dialogContentView?.findViewById<Button>(R.id.transaction_item_time_btn)
+        dateButton?.setOnClickListener {
+            hideDialog(dialog)
+            singleDateAndTimePickerDialog = DateTimePickerDialog().create(this)
+            singleDateAndTimePickerDialog?.setListener{ date ->
+                setDateAndTime(date)
+                openDialog(dialog)
+            }?.display()
+        }
 
         this.transactionType = tranType
-        dialog.show()
+        openDialog(dialog)
     }
 
-    override fun onDateSet(p0: DatePicker?, p1: Int, p2: Int, p3: Int) {
-        val c = Calendar.getInstance()
-        c.set(p1, p2, p3)
-        dateEt?.setText(SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(c.time))
+    private fun openDialog(dialog : AlertDialog?) {
+        isDialogOpened = true
+        dialog?.show()
     }
-//    override fun onDateChanged(p0: DatePicker?, p1: Int, p2: Int, p3: Int) {
-//        val c = Calendar.getInstance()
-//        c.set(p1, p2, p3)
-//        dateEt?.setText(SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(c.time))
-//    }
+
+    private fun hideDialog(dialog : AlertDialog?) {
+        isDialogOpened = false
+        dialog?.hide()
+    }
+
+    override fun onBackPressed() {
+        if(!isDialogOpened) {
+            singleDateAndTimePickerDialog?.close()
+            openDialog(dialog)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    private fun setDateAndTime(date : Date) {
+        dateTv?.text = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).format(date)
+    }
 
     private fun initDataListeners() {
         val expenseListener = object : ValueEventListener {
@@ -123,6 +146,7 @@ class PlannedTransactionsActivity : AppCompatActivity(), android.app.DatePickerD
                 transaction.price = (dialogContentView?.findViewById<EditText>(R.id.transaction_item_price))?.text.toString().toDouble()
                 transaction.type = transactionType
                 transaction.description = (dialogContentView?.findViewById<EditText>(R.id.transaction_item_note))?.text.toString()
+                transaction.datetime = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).parse(dateTv?.text.toString())
 
                 if(transactionType == TransactionType.EXPENDITURE) {
                     FirebaseDb().createObject("plannedExpense", transaction)

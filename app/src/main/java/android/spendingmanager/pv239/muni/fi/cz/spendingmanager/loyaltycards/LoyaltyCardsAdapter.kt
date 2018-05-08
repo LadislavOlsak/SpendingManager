@@ -91,19 +91,13 @@ class LoyaltyCardsAdapter(
         val alertDialog = AlertDialog.Builder(context)
                 .setTitle(loyaltyCard.cardName)
                 .setMessage("Do you want to delete this card?")
-                .setPositiveButton("Yes", DialogInterface.OnClickListener { _, i ->
+                .setPositiveButton("Yes", { _, _ ->
                     run{
-                        //todo delete
                         Toast.makeText(context, "Card \"" + loyaltyCard.cardName + "\" deleted.", Toast.LENGTH_SHORT).show()
                         FirebaseDb().deleteObject("loyaltycards/", loyaltyCard.key)
                     }
                 })
-                .setNegativeButton("No", DialogInterface.OnClickListener { dialogInterface, i ->
-                    run {
-                        //todo nothing
-                        Toast.makeText(context, "Cancelled", Toast.LENGTH_SHORT).show()
-                    }
-                }).create()
+                .setNegativeButton("No", { _, _ -> }).create()
         alertDialog.show()
     }
 }

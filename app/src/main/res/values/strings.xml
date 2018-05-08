@@ -87,4 +87,6 @@
     <string name="allowance_info">You\'ve used %1$s%% of your allowance.</string>
     <string name="allowance_used">Allowance used</string>
     <string name="actual_spending">Actual Spending</string>
+    <string name="time">Time</string>
+    <string name="over_under">Under / Over</string>
 </resources>
