@@ -21,6 +21,7 @@ import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.login.LoginActiv
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.login.UserData
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.planning.PlannedTransactionsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.statistics.StatisticsActivity
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.statistics.StatisticsHelper
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.Transaction
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionType
@@ -79,6 +80,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         accountDetailsAdapter = AccountDetailsAdapter(this, getDetailsMockData())
         account_details_list_lv.adapter = accountDetailsAdapter
+
     }
 
     private fun startLoginIntent() {
