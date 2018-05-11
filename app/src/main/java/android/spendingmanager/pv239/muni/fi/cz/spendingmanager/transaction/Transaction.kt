@@ -3,21 +3,37 @@ package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.Category
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.Exclude
+import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 import java.util.*
 
-open class Transaction {
+open class Transaction : Serializable{
     @Exclude
     var key : String? = null
+
+    @SerializedName("TransactionType")
     lateinit var type : TransactionType
+
+    @SerializedName("price")
     var price : Double = Double.NaN
+
+    @SerializedName("category")
     lateinit var category: Category
+
+    @SerializedName("description")
     lateinit var description: String
+
+    @SerializedName("datetime")
     lateinit var datetime: Date
 
+    @SerializedName("longitude")
     var longitude : Double? = null
+
+    @SerializedName("latitude")
     var latitude : Double? = null
 
     //lateinit var priceCurrency : Currency
+    @SerializedName("priceCurrency")
     var priceCurrency : String = "CZK"
 
     constructor()

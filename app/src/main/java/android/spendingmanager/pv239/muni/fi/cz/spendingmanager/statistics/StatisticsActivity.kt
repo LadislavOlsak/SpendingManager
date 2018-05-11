@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.Category
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.CategoryType
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.DefaultCategories
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.statistics.StatisticsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.Transaction
@@ -35,37 +36,57 @@ class StatisticsActivity : AppCompatActivity() {
         tabLayout.addTab(tabLayout.newTab().setText("Location stats"))
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
 
-        val viewPager = findViewById<View>(R.id.pager) as ViewPager
-        adapter = StatisticsPagerAdapter(supportFragmentManager, tabLayout.tabCount, mutableListOf())
-        viewPager.adapter = adapter
-        viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                viewPager.currentItem = tab.position
-            }
-            override fun onTabUnselected(tab: TabLayout.Tab) { }
-            override fun onTabReselected(tab: TabLayout.Tab) { }
-        })
+        val categoriesList : MutableList<Category> = mutableListOf<Category>()
+        val categoriesListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val list = mutableListOf<Category>()
+                snapshot.children.mapNotNullTo(list) {
+                    val category = it.getValue<Category>(Category::class.java)
+                    category?.key = it.key
+                    category
+                }
+                list.forEach { x -> categoriesList.add(x) }
+                DefaultCategories.getDefaultCategories().forEach { x -> categoriesList.add(x) }
 
-        val transactionsListener = object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val transactions = mutableListOf<Transaction>()
-                dataSnapshot.children.mapNotNullTo(transactions) {
-                    val transaction = it.getValue<Transaction>(Transaction::class.java)
-                    transaction?.key = it.key
-                    transaction
+                val transactionsListener = object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        val transactions = mutableListOf<Transaction>()
+                        dataSnapshot.children.mapNotNullTo(transactions) {
+                            val transaction = it.getValue<Transaction>(Transaction::class.java)
+                            transaction?.key = it.key
+                            transaction
+                        }
+                        val expenseOnlyList = transactions.filter { x ->
+                            x.type == TransactionType.EXPENDITURE
+                        }
+
+                        val viewPager = findViewById<View>(R.id.pager) as ViewPager
+                        adapter = StatisticsPagerAdapter(supportFragmentManager, tabLayout.tabCount, expenseOnlyList, categoriesList)
+                        viewPager.adapter = adapter
+                        viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
+                        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                            override fun onTabSelected(tab: TabLayout.Tab) {
+                                viewPager.currentItem = tab.position
+                            }
+                            override fun onTabUnselected(tab: TabLayout.Tab) { }
+                            override fun onTabReselected(tab: TabLayout.Tab) { }
+                        })
+                    }
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        println("loadPost:onCancelled ${databaseError.toException()}")
+                    }
                 }
-                val expenseOnlyList = transactions.filter { x ->
-                    x.type == TransactionType.EXPENDITURE
-                }
-                adapter?.update(expenseOnlyList)
+                FirebaseDb.getUserReference("transactions")?.addValueEventListener(transactionsListener)
             }
+
             override fun onCancelled(databaseError: DatabaseError) {
                 println("loadPost:onCancelled ${databaseError.toException()}")
             }
         }
-        FirebaseDb.getUserReference("transactions")?.addValueEventListener(transactionsListener)
+        FirebaseDb.getUserReference("categories")?.addValueEventListener(categoriesListener)
+
 
     }
+
 
 }

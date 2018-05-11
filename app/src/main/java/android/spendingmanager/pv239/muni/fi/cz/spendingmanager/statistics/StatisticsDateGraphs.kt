@@ -21,17 +21,30 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.components.XAxis
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
+import java.io.Serializable
 
 
 class StatisticsDateGraphs : Fragment() {
 
+    companion object {
+
+        fun newInstance(transactions: Serializable, categories: Serializable): StatisticsDateGraphs {
+
+            val args = Bundle()
+            args.putSerializable("transactions", transactions)
+            args.putSerializable("categories", categories)
+            val fragment = StatisticsDateGraphs()
+            fragment.arguments = args
+            return fragment
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.statistics_date_graphs, container, false)
+
+        val transactions = arguments?.getSerializable("transactions") as List<Transaction>
+        val categoriesList = arguments?.getSerializable("categories") as List<Category>
 
         val weeksSpiner = view.findViewById<View>(R.id.weeksSpinner) as Spinner
         val items = arrayOf("1", "2", "3", "4 (month)", "52 (year)")
@@ -42,69 +55,34 @@ class StatisticsDateGraphs : Fragment() {
 
         val categoryListView = view.findViewById<View>(R.id.categories_list) as ListView
         val categories : MutableList<String> = mutableListOf<String>()
-        val categoriesList : MutableList<Category> = mutableListOf<Category>()
-        var transactions : MutableList<Transaction> = mutableListOf()
 
-        val categoriesListener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val list = mutableListOf<Category>()
-                snapshot.children.mapNotNullTo(list) {
-                    val category = it.getValue<Category>(Category::class.java)
-                    category?.key = it.key
-                    category
-                }
-                categories.clear()
-                list.forEach { x -> categoriesList.add(x) }
-                DefaultCategories.getDefaultCategories().forEach { x -> categoriesList.add(x) }
-
-                categoriesList.forEachIndexed { index, category ->
-                    categories.add(category.categoryName)
-                }
-                val categoriesAdapter = ArrayAdapter<String>(activity, R.layout.statistics_date_graphs_catlist, categories)
-                categoryListView.adapter = categoriesAdapter
-                categoryListView.itemsCanFocus = false
-                categoryListView.choiceMode = ListView.CHOICE_MODE_MULTIPLE
-                categoriesList.forEachIndexed { index, category ->
-                    categoryListView.setItemChecked(index,true)
-                }
-                // Set categoryListView height (not working automatically)
-                val params = categoryListView.layoutParams
-                params.height = 120 * categoriesList.count()
-                categoryListView.layoutParams = params
-                categoryListView.requestLayout()
-
-                val transactionsListener = object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        dataSnapshot.children.mapNotNullTo(transactions) {
-                            val transaction = it.getValue<Transaction>(Transaction::class.java)
-                            transaction?.key = it.key
-                            transaction
-                        }
-
-                        var btnWeekSpinner = view.findViewById<View>(R.id.btnWeeksSpinner) as Button
-                        btnWeekSpinner.setOnClickListener {
-                            GenerateGraphs(view, weeksSpiner, categoryListView, categories, transactions)
-                        }
-                        GenerateGraphs(view, weeksSpiner, categoryListView, categories, transactions)
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        println("loadPost:onCancelled ${databaseError.toException()}")
-                    }
-                }
-
-                FirebaseDb.getUserReference("transactions")?.addValueEventListener(transactionsListener)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {}
+        categoriesList.forEachIndexed { index, category ->
+            categories.add(category.categoryName)
         }
+        val categoriesAdapter = ArrayAdapter<String>(activity, R.layout.statistics_date_graphs_catlist, categories)
+        categoryListView.adapter = categoriesAdapter
+        categoryListView.itemsCanFocus = false
+        categoryListView.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+        categoriesList.forEachIndexed { index, category ->
+            categoryListView.setItemChecked(index,true)
+        }
+        // Set categoryListView height (not working automatically)
+        val params = categoryListView.layoutParams
+        params.height = 120 * categoriesList.count()
+        categoryListView.layoutParams = params
+        categoryListView.requestLayout()
 
-        FirebaseDb.getUserReference("categories")?.addValueEventListener(categoriesListener)
+        var btnWeekSpinner = view.findViewById<View>(R.id.btnWeeksSpinner) as Button
+        btnWeekSpinner.setOnClickListener {
+            GenerateGraphs(view, weeksSpiner, categoryListView, categories, transactions)
+        }
+        GenerateGraphs(view, weeksSpiner, categoryListView, categories, transactions)
+
 
         return view
     }
 
-    private fun GenerateGraphs(view: View, weeksSpiner: Spinner, categoryListView : ListView, categories: List<String>, transactions : MutableList<Transaction>)
+    private fun GenerateGraphs(view: View, weeksSpiner: Spinner, categoryListView : ListView, categories: List<String>, transactions : List<Transaction>)
     {
         val onlyNumbers = Regex("[^0-9]")
         val weeksCount : Int = onlyNumbers.replace(weeksSpiner.selectedItem.toString(), "").toInt()

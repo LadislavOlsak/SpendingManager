@@ -18,15 +18,30 @@ import android.widget.Spinner
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.home.MainActivity
 import android.support.v4.app.FragmentManager
 import android.widget.AdapterView
+import java.io.Serializable
 
 
 class StatisticsDateOverview : Fragment() {
 
+    companion object {
+
+        fun newInstance(transactions: Serializable, categories: Serializable): StatisticsDateOverview {
+
+            val args = Bundle()
+            args.putSerializable("transactions", transactions)
+            args.putSerializable("categories", categories)
+            val fragment = StatisticsDateOverview()
+            fragment.arguments = args
+            return fragment
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.statistics_date_overview, container, false)
 
+        val transactions = arguments?.getSerializable("transactions") as List<Transaction>
+        val categories = arguments?.getSerializable("categories") as List<Category>
 
         val statisticsDateTabs = view.findViewById<View>(R.id.statistics_date_tabs) as TabLayout
         statisticsDateTabs.addTab(statisticsDateTabs.newTab().setText("Graphs"))
@@ -34,7 +49,7 @@ class StatisticsDateOverview : Fragment() {
         statisticsDateTabs.tabGravity = TabLayout.GRAVITY_FILL
 
         val statisticsDateViewpager = view.findViewById<View>(R.id.statistics_date_viewpager) as ViewPager
-        val statisticsDateAdapter = StatisticsDatePagerAdapter(getFragmentManager() as FragmentManager, statisticsDateTabs.tabCount)
+        val statisticsDateAdapter = StatisticsDatePagerAdapter(getFragmentManager() as FragmentManager, statisticsDateTabs.tabCount, transactions, categories)
         statisticsDateViewpager.adapter = statisticsDateAdapter
         statisticsDateViewpager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(statisticsDateTabs))
         statisticsDateTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {

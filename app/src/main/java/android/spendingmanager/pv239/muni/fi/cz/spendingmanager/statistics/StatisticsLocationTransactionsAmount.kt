@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.Category
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.Transaction
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionActivity
@@ -25,41 +26,40 @@ import com.google.firebase.database.ValueEventListener
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.algo.Algorithm
+import java.io.Serializable
 
 class StatisticsLocationTransactionsAmount : Fragment(), OnMapReadyCallback,
         ClusterManager.OnClusterClickListener<StatisticsClusterItem>,
         ClusterManager.OnClusterItemClickListener<StatisticsClusterItem> {
 
-    private var expenseOnlyList = mutableListOf<Transaction>()
+    private lateinit var expenseOnlyList : List<Transaction>
     private var mapFragment : SupportMapFragment? = null
+
+    companion object {
+
+        fun newInstance(transactions: Serializable, categories: Serializable): StatisticsLocationTransactionsAmount {
+
+            val args = Bundle()
+            args.putSerializable("transactions", transactions)
+            args.putSerializable("categories", categories)
+            val fragment = StatisticsLocationTransactionsAmount()
+            fragment.arguments = args
+            return fragment
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.statistics_location_transaction_amount, container, false)
 
-        val transactionsListener = object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val transactions = mutableListOf<Transaction>()
-                dataSnapshot.children.mapNotNullTo(transactions) {
-                    val transaction = it.getValue<Transaction>(Transaction::class.java)
-                    transaction?.key = it.key
-                    transaction
-                }
-                expenseOnlyList = transactions.filter { x ->
-                    x.type == TransactionType.EXPENDITURE
-                }.toMutableList()
+        expenseOnlyList = arguments?.getSerializable("transactions") as List<Transaction>
+        val categoriesList = arguments?.getSerializable("categories") as List<Category>
 
-                if(mapFragment == null) {
-                    // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-                    mapFragment = childFragmentManager.findFragmentById(R.id.mapAmount) as SupportMapFragment
-                    mapFragment?.getMapAsync(this@StatisticsLocationTransactionsAmount)
-                }
-            }
-            override fun onCancelled(databaseError: DatabaseError) {
-                println("loadPost:onCancelled ${databaseError.toException()}")
-            }
+        if (mapFragment == null) {
+            // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+            mapFragment = childFragmentManager.findFragmentById(R.id.mapAmount) as SupportMapFragment
+            mapFragment?.getMapAsync(this@StatisticsLocationTransactionsAmount)
         }
-        FirebaseDb.getUserReference("transactions")?.addValueEventListener(transactionsListener)
 
         return view
     }
