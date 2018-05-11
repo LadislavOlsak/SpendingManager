@@ -49,7 +49,7 @@ class StatisticsDateOverview : Fragment() {
         statisticsDateTabs.tabGravity = TabLayout.GRAVITY_FILL
 
         val statisticsDateViewpager = view.findViewById<View>(R.id.statistics_date_viewpager) as ViewPager
-        val statisticsDateAdapter = StatisticsDatePagerAdapter(getFragmentManager() as FragmentManager, statisticsDateTabs.tabCount, transactions, categories)
+        val statisticsDateAdapter = StatisticsDatePagerAdapter(childFragmentManager, statisticsDateTabs.tabCount, transactions, categories)
         statisticsDateViewpager.adapter = statisticsDateAdapter
         statisticsDateViewpager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(statisticsDateTabs))
         statisticsDateTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {

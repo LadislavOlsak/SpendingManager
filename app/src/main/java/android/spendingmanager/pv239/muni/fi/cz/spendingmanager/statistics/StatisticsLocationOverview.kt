@@ -42,7 +42,7 @@ class StatisticsLocationOverview : Fragment() {
         statisticsLocationTabs.tabGravity = TabLayout.GRAVITY_FILL
 
         val statisticsLocationViewpager = view.findViewById<View>(R.id.statistics_location_viewpager) as ViewPager
-        val statisticsLocationAdapter = StatisticsLocationPagerAdapter(getFragmentManager() as FragmentManager, statisticsLocationTabs.tabCount, transactions, categories)
+        val statisticsLocationAdapter = StatisticsLocationPagerAdapter(childFragmentManager, statisticsLocationTabs.tabCount, transactions, categories)
         statisticsLocationViewpager.adapter = statisticsLocationAdapter
         statisticsLocationViewpager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(statisticsLocationTabs))
         statisticsLocationTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {

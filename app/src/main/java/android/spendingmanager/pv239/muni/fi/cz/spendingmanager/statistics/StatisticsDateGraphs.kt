@@ -135,9 +135,11 @@ class StatisticsDateGraphs : Fragment() {
         }
 
         val lineData = LineData(dataSets.toList())
+        lineData.setDrawValues(false)
 
         chart.data = lineData
         chart.description.isEnabled = false
+        chart.getLegend().setWordWrapEnabled(true)
 
         val xAxis = chart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM

@@ -20,17 +20,25 @@ class StatisticsClusterManager(context: Context, map: GoogleMap, clusterManager:
         if (getValue)
         {
             value = cluster.items.sumByDouble { item -> item.getValue() }
-            return value.roundToInt()
+            return value.toInt()
         }
         else
         {
             value = cluster.size.toDouble()
-            return value.roundToInt()
+            return value.toInt()
         }
     }
 
     override fun getClusterText(bucket: Int): String {
-        return value.toString()
+        if (getValue)
+        {
+            return value.toString()
+        }
+        else
+        {
+            return value.toInt().toString()
+        }
+
     }
 
     override fun shouldRenderAsCluster(cluster: Cluster<StatisticsClusterItem>): Boolean {

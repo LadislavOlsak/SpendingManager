@@ -15,14 +15,18 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.Spinner
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import java.io.Serializable
+import java.text.DecimalFormat
 import java.util.*
 
 class StatisticsDayTimeOverview : Fragment() {
@@ -125,14 +129,47 @@ class StatisticsDayTimeOverview : Fragment() {
         }
 
         val lineData = LineData(dataSets.toList())
+        lineData.setDrawValues(false)
 
         chart.data = lineData
         chart.description.isEnabled = false
+        chart.getLegend().setWordWrapEnabled(true)
 
         val xAxis = chart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.setDrawGridLines(false)
         xAxis.setLabelCount(24, true)
+
+        val yLeftAxis = chart.axisLeft
+        //yLeftAxis.setLabelCount(1, true)
+        yLeftAxis.setValueFormatter(MyYAxisValueFormatter())
+
+        val yRightAxis = chart.axisRight
+        //yRightAxis.setLabelCount(1, true)
+        yRightAxis.setValueFormatter(MyYAxisValueFormatter())
+    }
+
+    internal inner class MyYAxisValueFormatter : IAxisValueFormatter {
+        private val mFormat: DecimalFormat
+
+        init {
+            mFormat = DecimalFormat("#")
+        }
+
+        override fun getFormattedValue(value: Float, axis: AxisBase?): String {
+            if (Math.abs(value - Math.ceil(value.toDouble())) < 0.01)
+            {
+                return mFormat.format(value.toInt())
+            }
+            else
+            {
+                return ""
+            }
+        }
+
+        fun getDecimalDigits(): Int {
+            return 1
+        }
     }
 
 }
