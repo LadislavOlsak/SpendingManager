@@ -42,16 +42,13 @@ class LoginActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == RC_SIGN_IN) {
-            val response = IdpResponse.fromResultIntent(data)
-
             if (resultCode == Activity.RESULT_OK) {
                 val user = FirebaseAuth.getInstance().currentUser as FirebaseUser
                 UserData.setFirebaseUser(user)
                 setResult(RESULT_OK)
                 finish()
             } else {
-                //todo
-                Toast.makeText(this, "Unable to log-in, try again.", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Unable to log-in, try again.", Toast.LENGTH_SHORT).show()
                 startFirebaseLoginIntent()
             }
         }

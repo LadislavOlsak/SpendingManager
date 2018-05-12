@@ -5,14 +5,13 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
-import android.widget.Toast
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.location.places.ui.PlacePicker
 import com.google.gson.Gson
 
 class LocationActivity : AppCompatActivity() {
 
-    val PLACE_PICKER_REQUEST = 12
+    private val PLACE_PICKER_REQUEST = 12
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
