@@ -12,7 +12,5 @@ class LoyaltyCard(
 ) {
     var key : String? = null
 
-    constructor() : this("", "", 0, "", "") {
-
-    }
+    constructor() : this("", "", 0, "", "")
 }

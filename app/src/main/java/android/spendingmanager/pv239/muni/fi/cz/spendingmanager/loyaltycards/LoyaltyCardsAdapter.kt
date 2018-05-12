@@ -2,28 +2,18 @@ package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Color
 import android.graphics.PorterDuff
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.MultiFormatWriter
-import com.google.zxing.WriterException
-import com.google.zxing.common.BitMatrix
-import com.journeyapps.barcodescanner.BarcodeEncoder
 import android.graphics.drawable.Drawable
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.ViewMode
 import android.support.v4.content.ContextCompat
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.loyalty_card_item.*
-
 
 /**
  * Created by Stefan on 26-Mar-18.

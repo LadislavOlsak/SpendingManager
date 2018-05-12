@@ -9,14 +9,11 @@ import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories.Defau
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.planning.TransactionFrequency
 import android.widget.ListView
-import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_limits.*
-import java.math.BigDecimal
-import java.util.*
 
 class LimitsActivity : AppCompatActivity() {
 
@@ -29,6 +26,15 @@ class LimitsActivity : AppCompatActivity() {
 
         val limitsList = findViewById<ListView>(R.id.limits_settings_list)
 
+        loadCustomCategories()
+
+        adapter = CategoryLimitsAdapter(this@LimitsActivity, emptyList())
+        limitsList.adapter = adapter
+
+        limits_save_changed_btn.setOnClickListener { saveChanges() }
+    }
+
+    private fun loadCustomCategories() {
         AllCategories.getCustomCategories(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = mutableListOf<Category>()
@@ -42,13 +48,9 @@ class LimitsActivity : AppCompatActivity() {
                 DefaultCategories.getDefaultCategories().forEach { x -> limitsMap[x.categoryName] = null }
                 loadLimits()
             }
+
             override fun onCancelled(databaseError: DatabaseError) {}
         })
-
-        adapter = CategoryLimitsAdapter(this@LimitsActivity, emptyList())
-        limitsList.adapter = adapter
-
-        limits_save_changed_btn.setOnClickListener { saveChanges() }
     }
 
     private fun loadLimits() {

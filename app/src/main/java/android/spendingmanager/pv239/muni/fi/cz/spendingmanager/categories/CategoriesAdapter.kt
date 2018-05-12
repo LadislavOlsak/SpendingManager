@@ -2,17 +2,11 @@ package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories
 
 import android.content.Context
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
-import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.limits.CategoryLimit
-import android.support.v7.widget.AppCompatSpinner
-import android.support.v7.widget.SwitchCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.EditText
-import android.widget.ListView
 import android.widget.TextView
-import java.util.*
 
 class CategoriesAdapter(
         private val context : Context,

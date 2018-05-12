@@ -1,7 +1,5 @@
 package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.categories
 
-import android.os.Bundle
-import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 

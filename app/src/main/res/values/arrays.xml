@@ -39,7 +39,6 @@
 
     <string-array name="frequency">
         <item>@string/monthly</item>
-        <!--<item>@string/biweekly</item> -->
         <item>@string/weekly</item>
         <item>@string/day</item>
     </string-array>

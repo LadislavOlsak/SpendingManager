@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
-import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.general.DatePickerDialog
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.DateTimePickerDialog
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionType
 import android.support.v7.widget.AppCompatSpinner
@@ -138,7 +137,7 @@ class PlannedTransactionsActivity : AppCompatActivity() {
         FirebaseDb.getUserReference("plannedIncome")?.addValueEventListener(incomeListener)
     }
 
-    private var dialogListener: DialogInterface.OnClickListener = DialogInterface.OnClickListener { dialog, which ->
+    private var dialogListener: DialogInterface.OnClickListener = DialogInterface.OnClickListener { _, which ->
         when (which) {
             DialogInterface.BUTTON_POSITIVE -> {
                 val frequency = freqSpinner?.selectedItem as TransactionFrequency

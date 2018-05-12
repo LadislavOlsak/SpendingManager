@@ -2,7 +2,6 @@ package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
@@ -14,7 +13,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_loyalty_cards.*
-import kotlinx.android.synthetic.main.loyalty_card_item.*
 
 class LoyaltyCardsActivity : AppCompatActivity() {
 
@@ -59,7 +57,7 @@ class LoyaltyCardsActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == SCAN_ACTIVITY_REQUEST_CODE) {
+        if (requestCode == this.SCAN_ACTIVITY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK && data != null) {
                 val cardNumber = data.getStringExtra(parameterName)
                 //todo check if card exists
@@ -75,7 +73,6 @@ class LoyaltyCardsActivity : AppCompatActivity() {
         newCardActivity.putExtra("cardNumber", cardNumber)
         newCardActivity.putExtra("mode", ViewMode.New.toString())
         startActivity(newCardActivity)
-        //todo refresh view
     }
 
     private fun startScanActivity() {

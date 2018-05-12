@@ -15,9 +15,8 @@ class PlannedTransaction : Transaction {
 
     constructor(
             frequency : TransactionFrequency
-    ) : super(TransactionType.EXPENDITURE, 250.0, Category("id", "Lunch", CategoryType.DEFAULT), "Some meet and fruits",
+    ) : super(TransactionType.EXPENDITURE, 0.0, Category("id", "Lunch", CategoryType.DEFAULT), "",
             Calendar.getInstance().time,
-            //GregorianCalendar(2018, 3, 12, 12, 34) ,
             null, "CZK") {
         this.frequency = frequency
     }

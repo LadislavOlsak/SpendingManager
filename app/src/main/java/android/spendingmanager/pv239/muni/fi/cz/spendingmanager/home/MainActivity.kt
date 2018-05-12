@@ -21,7 +21,6 @@ import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.login.LoginActiv
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.login.UserData
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.planning.PlannedTransactionsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.statistics.StatisticsActivity
-import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.statistics.StatisticsHelper
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.Transaction
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionType
@@ -29,7 +28,6 @@ import android.support.design.widget.NavigationView
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.AppCompatSpinner
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -48,7 +46,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.account_details.*
 import kotlinx.android.synthetic.main.account_graphs.*
-import kotlinx.android.synthetic.main.account_last_transactions.*
 import java.text.SimpleDateFormat
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
@@ -69,7 +66,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //setSupportActionBar(toolbar)
         nav_view.setNavigationItemSelectedListener(this)
 
         startLoginIntent()
@@ -80,7 +76,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         accountDetailsAdapter = AccountDetailsAdapter(this, getDetailsMockData())
         account_details_list_lv.adapter = accountDetailsAdapter
-
     }
 
     private fun startLoginIntent() {
@@ -125,9 +120,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            R.id.action_settings -> true
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -169,7 +164,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .addOnCompleteListener {
                     UserData.setFirebaseUser(null)
                     startLoginIntent()
-                    //todo
                     Toast.makeText(this, "Logged out successfully.", Toast.LENGTH_LONG).show()
                 }
     }
@@ -310,7 +304,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun loadCategoriesToDropdown() {
         AllCategories.getCustomCategories(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val categories = mutableListOf<String>("Overall")
+                val categories = mutableListOf("Overall")
                 categories.addAll(DefaultCategories.getDefaultCategories().map { x -> x.categoryName }.toMutableList())
                 snapshot.children.forEach { postSnapshot ->
                     val category = postSnapshot.getValue<Category>(Category::class.java) as Category
@@ -336,11 +330,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun setTransactionDateRange(fromDate : Date, toDate: Date) {
-        val dateFormatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-        val toDateString = dateFormatter.format(toDate)
-        val fromDateString = dateFormatter.format(fromDate)
-        //account_last_transaction_date_range_tv.text = "$fromDateString - $toDateString"
-
         transactionFrom = fromDate
         transactionTo = toDate
 

@@ -7,7 +7,7 @@ class DateTimePickerDialog {
 
     fun create(context : Activity) : SingleDateAndTimePickerDialog {
         return SingleDateAndTimePickerDialog.Builder(context)
-                .title("Simple")
+                .title("Select date and time")
                 .build()
     }
 }

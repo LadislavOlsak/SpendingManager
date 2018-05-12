@@ -5,20 +5,17 @@ import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.firebase.FirebaseDb
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.limits.CategoryLimit
-import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards.LoyaltyCard
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.planning.TransactionFrequency
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ValueEventListener
 import android.widget.AdapterView
 import android.view.ContextMenu
 import android.view.MenuItem
-
 
 class CategoriesActivity : AppCompatActivity() {
 
@@ -29,16 +26,36 @@ class CategoriesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_categories)
 
-        val context = this
+        loadCategories()
 
+        val customListView = findViewById<View>(R.id.categories_custom_list) as ListView
+        adapter = CategoriesAdapter(this, allCategories)
+        customListView.adapter = adapter
+        registerForContextMenu(customListView)
+
+        val customInput = findViewById<View>(R.id.categories_add_custom) as EditText
+        val customButton = findViewById<View>(R.id.categories_add_custom_button) as Button
+        customButton.setOnClickListener {
+            createCategory(customInput.text.toString())
+            customInput.setText("")
+        }
+    }
+
+    private fun createCategory(newItem: String) {
+        val newCategory = Category(newItem, newItem, CategoryType.CUSTOM)
+        FirebaseDb().createObject("categories", newCategory)
+        val categoryLimit = CategoryLimit(newCategory.categoryName, 0.0, "CZK", false, TransactionFrequency.Monthly)
+        FirebaseDb().createObject("categorylimits", categoryLimit)
+    }
+
+    private fun loadCategories() {
         AllCategories.getCustomCategories(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 allCategories.clear()
                 for (postSnapshot in snapshot.children) {
                     val category = postSnapshot.getValue<Category>(Category::class.java)
                     category?.key = postSnapshot.key
-                    if (category != null && category.id != "")
-                    {
+                    if (category != null && category.id != "") {
                         allCategories.add(category)
                     }
                 }
@@ -47,32 +64,13 @@ class CategoriesActivity : AppCompatActivity() {
 
             override fun onCancelled(databaseError: DatabaseError) {}
         })
-
-        val customListView = findViewById<View>(R.id.categories_custom_list) as ListView
-        adapter = CategoriesAdapter(context, allCategories)
-        customListView.adapter = adapter
-        registerForContextMenu(customListView)
-
-        val customInput = findViewById<View>(R.id.categories_add_custom) as EditText
-        val customButton = findViewById<View>(R.id.categories_add_custom_button) as Button
-        customButton.setOnClickListener {
-            val newItem = customInput.text.toString()
-            customInput.setText("")
-            val newCategory = Category(newItem, newItem, CategoryType.CUSTOM)
-            FirebaseDb().createObject("categories", newCategory)
-            val categoryLimit = CategoryLimit(newCategory.categoryName, 0.0, "CZK", false, TransactionFrequency.Monthly)
-            FirebaseDb().createObject("categorylimits", categoryLimit)
-        }
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo)
         val listView = findViewById<View>(R.id.categories_custom_list) as ListView
         if (v.id == listView.id) {
-
-            //menu.setHeaderTitle("Context Menu Example")
             menu.add(0, 0, 0, "Delete")
-            //menu.add(0, 0, 0, "Edit (not implemented yet)")
         }
     }
 
@@ -80,7 +78,7 @@ class CategoriesActivity : AppCompatActivity() {
         if (item.title === "Delete") {
             val menuInfo: AdapterView.AdapterContextMenuInfo = item.menuInfo as AdapterView.AdapterContextMenuInfo
             val index = menuInfo.position
-            var category = allCategories.get(index)
+            val category = allCategories[index]
             FirebaseDb.getUserReference("categories")?.child(category.key)?.removeValue()
             deleteCategoryLimit(category.categoryName)
         } else {
