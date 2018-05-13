@@ -2,6 +2,7 @@ package android.spendingmanager.pv239.muni.fi.cz.spendingmanager.home
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.loyaltycards.LoyaltyCardsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.R
@@ -21,6 +22,7 @@ import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.login.LoginActiv
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.login.UserData
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.planning.PlannedTransactionsActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.statistics.StatisticsActivity
+import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.statistics.StatisticsHelper
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.Transaction
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionActivity
 import android.spendingmanager.pv239.muni.fi.cz.spendingmanager.transaction.TransactionType
@@ -187,6 +189,79 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         initListenersForCollapseExpand()
 
         initDropdowns()
+
+        val warnings = mutableListOf<CategoryLimit>()
+        val errors = mutableListOf<CategoryLimit>()
+        FirebaseDb.getUserReference("categorylimits")?.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) { }
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val limits = mutableListOf<CategoryLimit>()
+                snapshot.children.mapNotNullTo(limits) {
+                    val cl = it.getValue<CategoryLimit>(CategoryLimit::class.java)
+                    cl?.key = it.key
+                    cl
+                }
+
+                val activeLimits = limits.filter { x ->
+                    x.isActive
+                }
+
+                FirebaseDb.getUserReference("transactions")?.addValueEventListener(object : ValueEventListener {
+                    override fun onCancelled(p0: DatabaseError) { }
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        val transactions = mutableListOf<Transaction>()
+                        dataSnapshot.children.mapNotNullTo(transactions) {
+                            val transaction = it.getValue<Transaction>(Transaction::class.java)
+                            transaction?.key = it.key
+                            transaction
+                        }
+                        val expenseOnlyList = transactions.filter { x ->
+                            x.type == TransactionType.EXPENDITURE
+                        }
+
+                        activeLimits.forEach { limit ->
+                            var transactionsValue = StatisticsHelper().CalculateValueTransactions(limit.categoryName, expenseOnlyList, 4, GregorianCalendar.getInstance())
+                            if (limit.limitAmount != null) {
+                                if (limit.limitAmount < transactionsValue)
+                                {
+                                    errors.add(limit)
+                                }
+                                if (limit.limitAmount < transactionsValue * 1.3)
+                                {
+                                    warnings.add(limit)
+                                }
+                            }
+                        }
+
+
+                        if (errors.count() > 0)
+                        {
+                            val toast = Toast.makeText(this@MainActivity, "You exceed the limit in the following category/categories: " + errors.joinToString{ it.categoryName }, Toast.LENGTH_LONG)
+                            val v = toast.getView().findViewById(android.R.id.message) as TextView
+                            v.setTextColor(Color.RED)
+                            toast.show()
+                            //DynamicToast.makeError(context as Context, "You exceed the limit in the following category/categories: " + errors.joinToString { "," }).show()
+                        }
+                        else if (warnings.count() > 0)
+                        {
+                            val toast = Toast.makeText(this@MainActivity, "You nearly reach the limit in the following category/categories: " + warnings.joinToString{ it.categoryName }, Toast.LENGTH_LONG)
+                            val v = toast.getView().findViewById(android.R.id.message) as TextView
+                            v.setTextColor(Color.rgb(255, 140, 0))
+                            toast.show()
+                            //DynamicToast.makeWarning(context as Context, "You nearly reach the limit in the following category/categories: " + warnings.joinToString { "," }).show()
+                        }
+                        else
+                        {
+                            val toast = Toast.makeText(this@MainActivity, "Your finance in the last four weeks are alright!", Toast.LENGTH_LONG)
+                            val v = toast.getView().findViewById(android.R.id.message) as TextView
+                            v.setTextColor(Color.GREEN)
+                            toast.show()
+                            //DynamicToast.makeSuccess(context as Context, "Your finance in the last four weeks are alright!").show()
+                        }
+                    }
+                })
+            }
+        })
     }
 
     private fun initDropdowns() {

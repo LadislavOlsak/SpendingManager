@@ -118,11 +118,17 @@ class StatisticsDateGeneral : Fragment() {
             }
             else if (value != 0.0)
             {
-                ratio = 999.0
+                ratio = 999.9
+            }
+
+            var strRatio = ratio.toInt().toString()
+            if (ratio > 999.0)
+            {
+                strRatio += "+"
             }
 
             val txt3 = EditText(activity)
-            txt3.setText(ratio.toInt().toString() + " %")
+            txt3.setText(strRatio + " %")
             if (ratio > 100)
             {
                 txt3.setTextColor(Color.rgb(121,0,36))
